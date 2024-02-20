@@ -13,7 +13,7 @@ from typing import Tuple, Optional
 def min_matrix(matrix: np.ndarray) -> Tuple[
     Optional[float], Tuple[
         Optional[int], Optional[int]]]:
-    if matrix.shape == (0,):
+    if not matrix or matrix.shape == (0,):
         return None, (None, None)
     least: Optional[float] = None
     pos: Optional[int, int] = (None, None)
