@@ -27,7 +27,6 @@ def min_matrix(matrix: np.ndarray) -> Tuple[
 class Program:
     def __init__(self, n: int = 1, m: int = 1) -> None:
         self.matrix = np.zeros(shape=(n, m))
-        self.cache_filename = './matrix_cache.dat'
 
     def from_file(self):
         try:
@@ -35,6 +34,7 @@ class Program:
                 self.matrix = np.array(eval(f.read()))
         except Exception as e:
             print(f"Something gone wrong", e)
+            self.matrix = None
 
     def to_file(self):
         try:
@@ -61,6 +61,7 @@ class Program:
                     j += 1
                 except ValueError:
                     print("You can enter only float numbers, try again")
+                    continue
             i += 1
             j = 0
 
@@ -72,16 +73,20 @@ class Program:
             print(" Invalid input, please try again ")
             self.from_random()
             return
-        n, m = self.matrix.shape
+
+        # n, m = self.matrix.shape
         self.matrix = np.random.rand(n, m)
 
     def menu(self):
-        #try:
-        [self.from_file, self.from_input, self.from_random][int(input("""Choose how to fill the matrix:
+        try:
+            [self.from_file, self.from_input, self.from_random][int(input("""Choose how to fill the matrix:
 1. From file 
 2. From input
 3. From random
 """))-1]()
+        except Exception as e:
+            print("Invalid input, choose option from proposed list and try again.")
+            return
 
         print(f"> Matrix: \n {self.matrix}")
         min_num = min_matrix(self.matrix)
