@@ -1,7 +1,4 @@
-from Graph import  Node, Edge, Graph
-import networkx as nx
-from typing import List, Tuple
-from initial import kyiv_map, places
+from initial import kyiv_map
 
 # Display the graph
 for edge in kyiv_map.edges:

@@ -1,5 +1,5 @@
 
-from Graph import  Node, Edge, Graph
+from Graph import Graph
 
 
 places = [
