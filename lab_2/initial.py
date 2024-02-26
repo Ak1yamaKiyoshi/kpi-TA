@@ -21,6 +21,10 @@ kyiv_map = Graph()
 for place in places:
     kyiv_map.add_node(place)
 
+#! Перед здачею відредагувати, та видалити 
+## ті сполучення, яких немає
+## 
+
 kyiv_map.add_edge(kyiv_map["Червоний університет"], kyiv_map["Михайлівський собор"], distance=2)
 kyiv_map.add_edge(kyiv_map["Червоний університет"], kyiv_map["Золоті ворота"], distance=3)
 kyiv_map.add_edge(kyiv_map["Червоний університет"], kyiv_map["Лядські ворота"], distance=4)
