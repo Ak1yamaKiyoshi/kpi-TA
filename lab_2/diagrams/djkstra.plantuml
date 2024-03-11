@@ -1,0 +1,22 @@
+@startuml
+
+start
+:Initialize start node;
+:Mark distance of start node as 0;
+:Create list of unvisited nodes with distances;
+while (unvisited nodes exist?) is (yes)
+    :Choose node with shortest distance;
+    :Mark node as visited;
+    while (unvisited neighbors exist?) is (yes)
+        :Calculate new distance to neighbor;
+        if (new distance is shorter than current distance) then (yes)
+            :Update neighbor's distance;
+            :Update neighbor's previous node;
+        endif
+    endwhile
+endwhile
+:Prepare dictionary for shortest paths;
+:Return shortest paths dictionary;
+stop
+
+@enduml

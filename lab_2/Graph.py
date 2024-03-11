@@ -3,6 +3,10 @@ from typing import Dict, List, Optional, Tuple
 import matplotlib.pyplot as plt
 import networkx as nx
 import heapq
+import random
+import timeit
+import matplotlib.pyplot as plt
+
 
 
 class Node:
@@ -75,39 +79,67 @@ class Graph:
                 shortest_paths[node.name] = (node.distance, node.previous.name if node.previous else None)
 
         return shortest_paths
+    
+    
+    def ford_fulkerson(self, start_node_name: str, end_node_name: str) -> float:
+        start_node = self[start_node_name]
+        end_node = self[end_node_name]
 
-    def bfs(self, source, sink):
-        visited = {node: False for node in self.nodes}
-        queue = deque([source])
-        visited[source] = True
-        parent = {source: None}
+        if start_node is None or end_node is None:
+            raise ValueError("Invalid start or end node name.")
+
+        max_flow = 0
+
+        while True:
+            path_flow, path = self.bfs(start_node, end_node)
+
+            if path_flow == 0:
+                break
+
+            max_flow += path_flow
+
+            v = end_node
+            print( v == start_node )
+            while v != start_node:
+                u = path[v]
+                edge = next(e for e in self.edges if (e.start == u and e.end == v) or (e.end == u and e.start == v))
+                if edge.start == u:
+                    edge.flow += path_flow
+                else:
+                    edge.flow -= path_flow
+                v = u
+        
+        return max_flow
+
+
+    def bfs(self, start_node: Node, end_node: Node) -> Tuple[float, Dict[Node, Node]]:
+        queue = deque([(start_node, 400)])
+        path = {start_node: None}
+        path_flow = 0
 
         while queue:
-            u = queue.popleft()
-            for edge in self.edges:  # Iterate directly over the edge list
-                if edge.start == u and not visited[edge.end] and edge.capacity > edge.flow:
-                    queue.append(edge.end)
-                    visited[edge.end] = True
-                    parent[edge.end] = u
+            u, flow = queue.popleft()
 
-        print(visited)
-        return parent if edge.end == sink else None
-
-    def ford_fulkerson(self, source, sink):
-        parent = self.bfs(source, sink)
-        while parent:
-            path_flow = min(edge.capacity - edge.flow for edge in self.edges if edge.start == parent[v] and v != source)
             for edge in self.edges:
-                if edge.start == parent[v] and v != source:
-                    edge.flow += path_flow
-                    self.edges[self.edges.index(edge) + 1].flow -= path_flow
-                elif edge.end == parent[v] and v != sink: 
-                    edge.flow -= path_flow
-                    self.edges[self.edges.index(edge) - 1].flow += path_flow
-                v = edge.end
-            parent = self.bfs(source, sink)
+                if edge.start == u:
+                    v = edge.end
+                    residual_capacity = edge.capacity - edge.flow
+                elif edge.end == u:
+                    v = edge.start
+                    residual_capacity = edge.flow
+                else:
+                    continue
 
-        return sum(edge.flow for edge in self.edges if edge.start == source)
+                if v not in path and residual_capacity > 0:
+                    path[v] = u
+                    new_flow = max(flow, residual_capacity)
+                    if v == end_node:
+                        path_flow = new_flow
+                        break
+                    
+                    queue.append((v, new_flow))
+        
+        return path_flow , path
 
 
     def prim_minimum_spanning_tree(self, start_node_name: str) -> List[Edge]:
@@ -188,13 +220,13 @@ class GraphColoring:
         self.graph = graph
 
     def greedy_coloring(self):
-        color_map = {}  # To store the color assigned to each node
+        color_map = {}
         for node in self.graph.nodes:
-            used_colors = set()  # Set to store colors used by neighboring nodes
+            used_colors = set()
             for neighbor in self.get_neighbors(node):
                 if neighbor in color_map:
                     used_colors.add(color_map[neighbor])
-            # Find the first available color
+
             for color in range(len(self.graph.nodes)):
                 if color not in used_colors:
                     color_map[node] = color
@@ -209,3 +241,66 @@ class GraphColoring:
             elif not edge.one_way and edge.end == node:
                 neighbors.add(edge.start)
         return neighbors
+
+
+def create_graph(n):
+    graph = Graph()
+    for i in range(n):
+        graph.add_node(str(i))
+    
+    for i in range(n):
+        for j in range(i+1, n):
+            distance = random.randint(1, 10)
+            graph.add_edge(graph[str(i)], graph[str(j)], distance)
+            graph.add_edge(graph[str(j)], graph[str(i)], distance)
+    
+    start_node = graph[str(0)]
+    return graph, start_node.name
+
+def benchmark_dijkstra(n):
+    graph, start_node_name = create_graph(n)
+    stmt = f"graph.dijkstra('{start_node_name}')"
+    setup = f"from __main__ import Graph, create_graph; graph, start_node_name = create_graph({n})"
+    return timeit.timeit(stmt, setup=setup, number=10)
+
+def benchmark_naive(n):
+    distances = [[float('inf')] * n for _ in range(n)]
+    for i in range(n):
+        distances[i][i] = 0
+    
+    for i in range(n):
+        for j in range(i+1, n):
+            distance = random.randint(1, 10)
+            distances[i][j] = distance
+            distances[j][i] = distance
+    
+    stmt = """
+for k in range(n):
+    for i in range(n):
+        for j in range(n):
+            distances[i][j] = min(distances[i][j], distances[i][k] + distances[k][j])
+"""
+    setup = f"n = {n}; distances = {distances}"
+    return timeit.timeit(stmt, setup=setup, number=10)
+
+
+if __name__ == "__main__":
+    sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+    dijkstra_times = []
+    naive_times = []
+
+    for size in sizes:
+        print(f"Running for size {size}...")
+        dijkstra_time = benchmark_dijkstra(size)
+        naive_time = benchmark_naive(size)
+        dijkstra_times.append(dijkstra_time)
+        naive_times.append(naive_time)
+        print(f"Dijkstra: {dijkstra_time:.6f} seconds, Naive: {naive_time:.6f} seconds")
+
+    plt.plot(sizes, dijkstra_times, label='Dijkstra')
+    plt.plot(sizes, naive_times, label='Naive')
+    plt.xlabel('Graph Size')
+    plt.ylabel('Time (seconds)')
+    plt.title('Dijkstra vs O(n^2) Algorithm')
+    plt.legend()
+    plt.show()

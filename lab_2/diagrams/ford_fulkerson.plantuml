@@ -1,0 +1,23 @@
+@startuml
+
+start
+:Initialize start and end nodes;
+if (start or end node is invalid?) then (yes)
+    :Raise ValueError;
+else (no)
+    :Initialize max_flow as 0;
+    repeat
+        :Find augmenting path using BFS;
+        if (path_flow is 0?) then (yes)
+            :Exit loop;
+        else (no)
+            :Update max_flow with path_flow;
+            :Backtrack and update flow along path;
+        endif
+    repeat while (path_flow is not 0);
+endif
+:Return max_flow;
+
+stop
+
+@enduml

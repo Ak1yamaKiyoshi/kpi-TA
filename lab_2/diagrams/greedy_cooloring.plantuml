@@ -1,0 +1,17 @@
+@startuml
+
+start
+:Initialize empty color map;
+:Iterate through each node in graph.nodes;
+while (there are nodes left to process?) is (yes)
+    :Initialize set of used colors;
+    :Get neighbors of current node;
+    while (there are neighbors left to process?) is (yes)
+        :Check if neighbor has color assigned;
+    endwhile
+    :Assign color to current node;
+endwhile
+:Return color map;
+stop
+
+@enduml
