@@ -1,0 +1,41 @@
+@startuml
+
+' Define start and end nodes
+start
+:dfs(graph, node, visited, stack);
+if (stack is not empty?) then (yes)
+  :pop a node from stack;
+  :check if node is visited;
+  if (node is not visited) then (yes)
+    :visit node;
+    :iterate through neighbors;
+    if (neighbor is not visited and edge exists) then (yes)
+      :call dfs(graph, neighbor, visited, stack);
+    endif
+    stop
+  endif
+  stop
+else (no)
+  stop
+endif
+
+partition Transpose {
+  :transpose(graph);
+}
+
+partition Kosaraju {
+  :kosaraju(graph);
+  :iterate through nodes;
+  if (node is not visited) then (yes)
+    :call dfs(graph, i, visited, stack);
+  endif
+  partition Transpose {
+    :transpose(graph);
+  }
+  :iterate through stack;
+  if (node is not visited) then (yes)
+    :call dfs(transposed_graph, current_node, visited, scc);
+  endif
+}
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+
+start
+:Initialize graph parameters;
+repeat
+    :Pick an unvisited node;
+    :Run Tarjan's DFS from this node;
+while (All nodes are visited?)
+stop
+
+start
+:Record index and low link for the node;
+:Push the node onto the stack;
+repeat
+    :Explore neighbors;
+    if (Neighbor not visited) then (Yes)
+        :Recursively call Tarjan's DFS;
+        :Update low link of the current node;
+    else (No)
+        if (Neighbor on stack) then (Yes)
+            :Update low link of the current node;
+        endif
+    endif
+while (All neighbors are visited?)
+if (Node is the root of an SCC) then (Yes)
+    :Pop nodes from stack and record SCC;
+endif
+stop
+
+@enduml
