@@ -1,0 +1,28 @@
+@startuml
+start
+:Initialize distances and visited array;
+:Initialize parent array;
+:Initialize priority queue with (0, source);
+while (pq is not empty) is (not_empty)
+    :Pop element from pq;
+    :current_dist, current_node = popped element;
+    if (current_node is visited) then (visited_check)
+        :Skip to iterate_neighbors;
+    else
+        :Mark current_node as visited;
+        while (for each neighbor) is (iterate_neighbors)
+            :Get distance and flow to neighbor;
+            if (distance < infinity and flow > 0) then (check_condition)
+                :Calculate new distance;
+                if (new distance is less than current distance to neighbor) then (update_distance)
+                    :Update distance to neighbor;
+                    :Update parent array;
+                    :Push neighbor to pq;
+                endif
+            endif
+        endwhile
+    endif
+endwhile (not_empty)
+:Return distances and parent;
+stop
+@enduml
