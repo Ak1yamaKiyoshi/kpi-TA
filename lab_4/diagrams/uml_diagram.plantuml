@@ -1,0 +1,20 @@
+@startuml
+title SingleLinkedList Class
+
+class SingleLinkedList {
+    __init__()
+    append(value)
+    prepend(value)
+    delete(value)
+    find(value)
+    index_of(func)
+    from_list(values)
+    __iter__()
+    __add__(other_list)
+    __slice__(start, end)
+    __getitem__(index)
+    __repr__()
+    __len__()
+}
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+start
+:Create new SingleLinkedList;
+:Initialize current_index to 0;
+:Initialize current to self.head;
+while (current_index < start)
+  :Move current to current.next_node;
+  :Increment current_index;
+endwhile
+while (current_index < end)
+  :Append current.value to new_list;
+  :Move current to current.next_node;
+  :Increment current_index;
+endwhile
+:Return new_list;
+stop
+@enduml

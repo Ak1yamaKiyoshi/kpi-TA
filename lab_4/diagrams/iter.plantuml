@@ -1,0 +1,11 @@
+@startuml
+
+start
+:current = self.head;
+while (current) is (True)
+  :yield current;
+  :current = current.next_node;
+endwhile
+stop
+
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+title prepend Method Flowchart
+
+start
+:Create a new node with value;
+:new_node.next_node = self.head;
+:self.head = new_node;
+stop
+@enduml

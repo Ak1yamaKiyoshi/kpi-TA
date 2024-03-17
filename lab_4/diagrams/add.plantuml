@@ -1,0 +1,20 @@
+@startuml
+
+start
+:Create a new SingleLinkedList (new_list);
+note right: This will be the result of the concatenation
+
+partition Loop through self
+    :Iterate over each value in self;
+    :Append the value to new_list;
+end
+
+partition Loop through other_list
+    :Iterate over each value in other_list;
+    :Append the value to new_list;
+end
+
+:Return the new_list;
+stop
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+title __getitem__ Method Flowchart
+
+start
+:current_index = 0;
+:current = self.head;
+while (current_index < index)
+  if (current is None)
+    :raise IndexError("Index out of range");
+    stop
+  endif
+  :current = current.next_node;
+  :current_index += 1;
+endwhile
+
+if (current is None)
+  :raise IndexError("Index out of range");
+  stop
+endif
+
+:return current;
+stop
+@enduml

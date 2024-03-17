@@ -1,0 +1,12 @@
+@startuml
+start
+:initialize empty list elements;
+:initialize current to head;
+while (current) is (true)
+  :append current.value to elements;
+  :move to next node from current;
+endwhile (current is not null)
+:create a string by joining elements with "->" separator;
+:return the string;
+stop
+@enduml
