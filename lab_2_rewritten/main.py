@@ -54,4 +54,4 @@ print(f"Results saved in {Config.output_dir} directory.")
 print("""Lab work was done by: 
 - Kolosov Ihor
 - Pedko Mykyta
-- ???? Vladyslav""")
+- Bakunets Vladyslav""")
