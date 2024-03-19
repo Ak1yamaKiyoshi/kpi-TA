@@ -37,13 +37,16 @@ GraphOperations.draw_spanning_tree(kiyv_map, mst_edges)
 
 # Coloring 
 colors = GraphOperations.graph_coloring(kiyv_map)
-color_map = [colors[node] for node in range(kiyv_map.num_nodes)]
-to_save = {"colors_map": color_map, "colors": colors, "needed_colors": len(set(color_map))}
+color_map = [colors[node] 
+for node in range(kiyv_map.num_nodes)]
+to_save = {"colors_map": 
+color_map, "colors": colors, "needed_colors": len(set(color_map))}
 print(f"Needed amount colors: {len(set(color_map))}")
 with open(Config.output_dir + 'colors.txt', 'w') as f: f.write(str(to_save))
 
 # Max flow using ford fulkerson
-max_flow = GraphOperations.ford_fulkerson(kiyv_map, 0, kiyv_map.num_nodes - 1)
+max_flow = GraphOperations.ford_fulkerson(
+kiyv_map, 0, kiyv_map.num_nodes - 1)
 print(f"Max flow: {max_flow}")
 
 # Benchmark 
