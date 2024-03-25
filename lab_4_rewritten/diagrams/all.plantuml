@@ -1,0 +1,53 @@
+@startuml
+title Student Queue Program Flowchart
+
+start
+:Start program "O(1)";
+if (Load students from file "O(1)") then (No)
+  :Display "Browse" button "O(1)";
+else (Yes)
+  :Display file dialog "O(1)";
+  if (File selected "O(1)") then (Yes)
+    :Read file contents "O(n)";
+    while (Read each line "O(n^2)") is (true)
+      :Append student to both lists "O(n)";
+    endwhile
+    :Update student info for both lists "O(n)";
+  else (No)
+    :Display error message "O(1)";
+  endif
+endif
+
+while (Program running "O(1)") is (true)
+  :Process Student "O(1)";
+  if (List 1 empty? "O(1)") then (No)
+    :Update student info for List 1 "O(n)";
+    if (Pass or Fail clicked "O(1)") then (Yes)
+      :Add student to report list for List 1 "O(1)";
+      :Add student score to score list for List 1 "O(1)";
+      :Add result to result list for List 1 "O(1)";
+      :Update student info for List 1 "O(n)";
+    else (No)
+      :Do nothing "O(1)";
+    endif
+  else (Yes)
+    :Disable pass/fail buttons for List 1 "O(1)";
+  endif
+  
+  if (List 2 empty? "O(1)") then (No)
+    :Update student info for List 2 "O(n)";
+    if (Pass or Fail clicked "O(1)") then (Yes)
+      :Add student to report list for List 2 "O(1)";
+      :Add student score to score list for List 2 "O(1)";
+      :Add result to result list for List 2 "O(1)";
+      :Update student info for List 2 "O(n)";
+    else (No)
+      :Do nothing "O(1)";
+    endif
+  else (Yes)
+    :Disable pass/fail buttons for List 2 "O(1)";
+  endif
+endwhile
+
+stop
+@enduml

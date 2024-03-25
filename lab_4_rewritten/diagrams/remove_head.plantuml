@@ -1,0 +1,13 @@
+@startuml
+title Single Linked List Remove Head Flowchart
+
+:Start remove_head();
+if (Check if head is None) then (Yes)
+  :Return None "O(1)";
+else (No)
+  :Store head's data "O(1)";
+  :Move head to next node "O(1)";
+  :Return stored data "O(1)";
+endif
+
+@enduml
