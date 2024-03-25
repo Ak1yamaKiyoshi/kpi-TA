@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+from typing import Tuple, List
 import numpy as np
 from config import Config
 from collections import defaultdict
@@ -8,11 +9,15 @@ from collections import defaultdict
 class Graph:
     def __init__(self, num_nodes):
         self.num_nodes = num_nodes
-        self.labels = [None] * num_nodes 
         self.distances = np.full((num_nodes, num_nodes), np.inf)
+        self.labels = [i for i in range(num_nodes)] 
+        
+        self._positions = [None] * num_nodes
         self.flows = np.zeros((num_nodes, num_nodes))
         for i in range(num_nodes):
             self.distances[i][i] = 0
+        self._position = (None, None)
+
 
     def add_edge(self, u, v, distance, flow):
         self.distances[u][v] = distance
@@ -42,6 +47,13 @@ class Graph:
 
     def get_label(self, node):
         return self.labels[node]
+    
+    def set_pos(self, node:int, pos: Tuple[int, int]):
+        self._positions[node] = pos
+
+    def get_pos(self, node):
+        return self._positions[node]
+
 
 
 class GraphOperations:
@@ -89,7 +101,7 @@ class GraphOperations:
 
 
     @classmethod
-    def dfs(cls, graph, node, visited, stack):
+    def dfs(cls, graph: Graph, node, visited, stack):
         visited[node] = True
         for neighbor in range(graph.num_nodes):
             if graph.distances[node][neighbor] != np.inf and not visited[neighbor]:
@@ -181,9 +193,10 @@ class GraphOperations:
 
 
     @classmethod
-    def ford_fulkerson(cls, graph, source, sink):
+    def ford_fulkerson(cls, graph, source, sink, return_path = False):
         num_nodes = graph.num_nodes
         max_flow = 0
+        paths = []
 
         while True:
             distances, parent = cls.dijkstra(graph, source)
@@ -192,12 +205,14 @@ class GraphOperations:
 
             min_flow = np.inf
             node = sink
-
+            path = []
             while node != source:
                 parent_node = parent[node]
                 min_flow = min(min_flow, graph.get_flow(parent_node, node))
+                path.append((parent_node, node))
                 node = parent_node
 
+            paths.append(path)
             node = sink
             while node != source:
                 parent_node = parent[node]
@@ -206,6 +221,8 @@ class GraphOperations:
 
             max_flow += min_flow
 
+        if return_path:
+            return max_flow, paths
         return max_flow
 
 
@@ -290,6 +307,42 @@ class GraphOperations:
             graph.scc_list.append(scc)
         return graph.scc_list
 
+
+    @staticmethod
+    def draw_kiyv_map(kiyv_map:Graph, label="kiyv_map", paths:List[List[Tuple[int, int]]]=[], scc=[]):
+        G = nx.Graph()
+        G.add_nodes_from(range(kiyv_map.num_nodes))
+
+        for u in range(kiyv_map.num_nodes):
+            for v in range(u + 1, kiyv_map.num_nodes):
+                if kiyv_map.distances[u][v] != np.inf:
+                    G.add_edge(u, v, weight=kiyv_map.distances[u][v])
+                    
+        pos = nx.spring_layout(G)
+        colors = ["tab:red", "tab:blue", "tab:green", "yellow", "orange", "indigo"] * 10 
+        
+        for node in range(kiyv_map.num_nodes):
+            pos[node] = np.array(kiyv_map.get_pos(node))
+        
+
+        nx.draw_networkx_nodes(G, pos, node_size=400)
+        for lst, color in zip(scc, colors):
+            nx.draw_networkx_nodes(G, pos, lst, node_size=400, node_color=color)
+        
+        nx.draw_networkx_edges(G,  pos,  width=0.8, alpha=0.8, arrows=True)
+        for path, color in zip(paths, colors):
+            nx.draw_networkx_edges(G, pos, edgelist=path,width=5, edge_color=color)
+            
+        labels = {node: kiyv_map.get_label(node) for node in G.nodes()}
+        nx.draw_networkx_labels(G, pos, labels, font_size=9, font_color='black')
+
+        edge_labels = {(u, v): f"{kiyv_map.distances[u][v]:.1f}" for u, v in G.edges()}
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+        plt.title("Graph")
+        plt.axis("off")
+        plt.savefig(Config.output_dir + f'{label}.png')
+        plt.show()
 
     @staticmethod
     def draw_graph(graph, label="graph"):

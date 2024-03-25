@@ -15,7 +15,7 @@ Install dependencies
 pip install numpy matplotlib tqdm networkx[default]
 ```
 
-Run whole script 
+Run selection between two labs 
 ```
 python main.py
 ```
