@@ -28,6 +28,20 @@ class SingleLinkedList:
         self.head = self.head.next
         return removed_data
 
+class SingleLinkedListArray:
+    def __init__(self):
+        self.array = []
+
+    def append(self, data):
+        self.array.append(data)
+
+    def remove_head(self):
+        if len(self.array) == 0:
+            return None
+        removed_data = self.array[0]
+        del self.array[0]
+        return removed_data
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
