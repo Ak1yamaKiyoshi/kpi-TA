@@ -1,0 +1,16 @@
+@startuml
+title Single Linked List Flowchart
+
+:Start program;
+if (Check if head is None) then (Yes)
+  :Create new node with data "O(1)";
+  :Set head to new node "O(1)";
+else (No)
+  :Set current to head "O(1)";
+  while (Check if current has next node "O(n)") is (true)
+    :Move current to next node "O(n)";
+  endwhile
+  :Create new node with data "O(1)";
+  :Set current's next to new node "O(1)";
+endif
+@enduml
