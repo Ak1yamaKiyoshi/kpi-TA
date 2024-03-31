@@ -1,9 +1,0 @@
-@startuml
-start
-:Initialize self;
-while (Loop through values) is (true)
-  :Get next value;
-  :Append value to self;
-endwhile (Loop through values)
-stop
-@enduml
