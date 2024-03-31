@@ -1,0 +1,68 @@
+@startuml
+title Hash Table App Flowchart
+
+start
+:create_widgets();
+:students;
+:table_size = 25;
+:last_hash_function = None;
+:output = "Birthdays after hash table:\n";
+
+if (save_student()) then (Yes)
+    :name_entry.get();
+    if (name in students?) then (Yes)
+        :show error message;
+    else (No)
+        :birthdate = date_picker.get_date();
+        :students[name] = birthdate;
+        :create_hash_table(last_hash_function);
+    endif
+endif
+
+if (clear_student()) then (Yes)
+    :name_entry.get();
+    if (name in students?) then (Yes)
+        :del students[name];
+        :create_hash_table(last_hash_function);
+    else (No)
+        :show error message;
+    endif
+endif
+
+if (create_hash_table()) then (Yes)
+    :last_hash_function = hash_function;
+    :hash_table = [None] * table_size;
+    while (name, birthdate in students.items() " <font color=red>O(n^4) </font>")
+        :hash_code = hash(name);
+        :index = abs(hash_code) % table_size;
+        :i = 1;
+        while (hash_table[index] is not None " <font color=red> O(n^3)</font>")
+            :index = hash_function(hash_code, i, table_size);
+            :i += 1;
+            if (i > table_size) then (Yes)
+                :table_size += 1;
+                :new_hash_table = [None] * table_size;
+                while (j, item in enumerate(hash_table) " <font color=red>O(n^2)</font>")
+                    if (item is not None) then (Yes)
+                        :new_hash_code = hash(item[0]);
+                        :new_index = abs(new_hash_code) % table_size;
+                        :new_i = 1;
+                        while (new_hash_table[new_index] is not None "<font color=red>O(n)</font>")
+                            :new_index = hash_function(new_hash_code, new_i, table_size);
+                            :new_i += 1;
+                        endwhile
+                        :new_hash_table[new_index] = item;
+                    endif
+                endwhile
+                :hash_table = new_hash_table;
+            endif
+        endwhile
+        :hash_table[index] = (name, birthdate);
+    endwhile
+    :output += f"{i}: {item[0]}\n";
+endif
+
+:result_text.delete("1.0", tk.END);
+:result_text.insert(tk.END, output);
+
+@enduml

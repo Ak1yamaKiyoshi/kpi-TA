@@ -56,4 +56,5 @@ if __name__ == "__main__":
     plt.ylabel('Execution Time (seconds)')
     plt.title('Hashing vs List Benchmark for Different Table Sizes')
     plt.legend()
+    plt.savefig("./outputs/benchmark.png")
     plt.show()
