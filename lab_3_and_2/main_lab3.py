@@ -16,15 +16,11 @@ def run_algorithm():
     if selected_algorithm == "algorythm_component_silnoji_zviyaznosty_po_shlyahah":
         result_label.config(text=f"algorythm_component_silnoji_zviyaznosty_po_shlyahah algorithm: {GraphOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah(kiyv_map)}")
         GraphOperations.draw_kiyv_map(scc=GraphOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah(kiyv_map), kiyv_map=kiyv_map, label="algorythm_component_silnoji_zviyaznosty_po_shlyahah")
-
     elif selected_algorithm == "Tarjan":
         result_label.config(text=f"Tarjan's algorithm: {GraphOperations.tarjan_scc(kiyv_map)}")
         GraphOperations.draw_kiyv_map(scc=GraphOperations.tarjan_scc(kiyv_map), kiyv_map=kiyv_map, label="tarjan")
-
     else:
         result_label.config(text="Invalid algorithm selection")
-    
-
 
 
 nodes = [

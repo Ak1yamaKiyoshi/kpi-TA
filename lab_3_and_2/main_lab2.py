@@ -7,50 +7,50 @@ from config import Config
 import os
 
 nodes = [
-    (1+0, "Червоний університет"),
-    (1+1, "Андріївська церква"),
-    (1+2, "Михайлівський собор"),
-    (1+3, "Золоті ворота"),
-    (1+4, "Лядські ворота"),
-    (1+5, "Фунікулер"),
-    (1+6, "Київська політехніка"),
-    (1+7, "Фонтан на Хрещатику"),
-    (1+8, "Софія київська"),
-    (1+9, "Національна філармонія"),
-    (1+10, "Музей однієї вулиці"),
+    (0, "Червоний університет"),
+    (1, "Андріївська церква"),
+    (2, "Михайлівський собор"),
+    (3, "Золоті ворота"),
+    (4, "Лядські ворота"),
+    (5, "Фунікулер"),
+    (6, "Київська політехніка"),
+    (7, "Фонтан на Хрещатику"),
+    (8, "Софія київська"),
+    (9, "Національна філармонія"),
+    (10, "Музей однієї вулиці"),
 ]
 
 
 kiyv_map = Graph(11)
-kiyv_map.add_edge(u=0, v=1, distance=2.0,   flow=400)
-kiyv_map.add_edge(u=0, v=2, distance=1.7,   flow=400)
-kiyv_map.add_edge(u=0, v=3, distance=0.9,   flow=400)
-kiyv_map.add_edge(u=0, v=5, distance=2.5,   flow=400)
-kiyv_map.add_edge(u=0, v=6, distance=5.0,   flow=400)
-kiyv_map.add_edge(u=0, v=7, distance=1.0,   flow=400)
-kiyv_map.add_edge(u=0, v=9, distance=2.5,   flow=400)
-kiyv_map.add_edge(u=1, v=2, distance=0.6,   flow=400)
-kiyv_map.add_edge(u=1, v=3, distance=1.3,   flow=400)
-kiyv_map.add_edge(u=1, v=7, distance=2.0,   flow=400)
-kiyv_map.add_edge(u=1, v=8, distance=0.95,  flow=400)
-kiyv_map.add_edge(u=1, v=10, distance=0.6,  flow=400)
-kiyv_map.add_edge(u=2, v=0, distance=1.7,   flow=400)
-kiyv_map.add_edge(u=2, v=3, distance=1.0,   flow=400)
-kiyv_map.add_edge(u=3, v=0, distance=0.9,   flow=400)
-kiyv_map.add_edge(u=3, v=1, distance=1.3,   flow=400)
-kiyv_map.add_edge(u=3, v=7, distance=1.0,   flow=400)
-kiyv_map.add_edge(u=3, v=3, distance=0.55,  flow=400)
-kiyv_map.add_edge(u=4, v=2, distance=0.5,   flow=400)
-kiyv_map.add_edge(u=4, v=7, distance=1.1,   flow=400)
-kiyv_map.add_edge(u=5, v=5, distance=0.75,  flow=400)
-kiyv_map.add_edge(u=6, v=0, distance=5.0,   flow=400)
-kiyv_map.add_edge(u=7, v=0, distance=1.0,   flow=400)
-kiyv_map.add_edge(u=7, v=1, distance=2.0,   flow=400)
-kiyv_map.add_edge(u=7, v=4, distance=1.1,   flow=400)
-kiyv_map.add_edge(u=7, v=8, distance=1.1,   flow=400)
-kiyv_map.add_edge(u=8, v=4, distance=0.75,  flow=400)
-kiyv_map.add_edge(u=9, v=0, distance=2.3,   flow=400)
-kiyv_map.add_edge(u=9, v=5, distance=0.75,  flow=400)
+kiyv_map.add_edge(u=0,  v=1, distance=2.0,   flow=400)
+kiyv_map.add_edge(u=0,  v=2, distance=1.7,   flow=400)
+kiyv_map.add_edge(u=0,  v=3, distance=0.9,   flow=400)
+kiyv_map.add_edge(u=0,  v=5, distance=2.5,   flow=400)
+kiyv_map.add_edge(u=0,  v=6, distance=5.0,   flow=400)
+kiyv_map.add_edge(u=0,  v=7, distance=1.0,   flow=400)
+kiyv_map.add_edge(u=0,  v=9, distance=2.5,   flow=400)
+kiyv_map.add_edge(u=1,  v=2, distance=0.6,   flow=400)
+kiyv_map.add_edge(u=1,  v=3, distance=1.3,   flow=400)
+kiyv_map.add_edge(u=1,  v=7, distance=2.0,   flow=400)
+kiyv_map.add_edge(u=1,  v=8, distance=0.95,  flow=400)
+kiyv_map.add_edge(u=1,  v=10, distance=0.6,  flow=400)
+kiyv_map.add_edge(u=2,  v=0, distance=1.7,   flow=400)
+kiyv_map.add_edge(u=2,  v=3, distance=1.0,   flow=400)
+kiyv_map.add_edge(u=3,  v=0, distance=0.9,   flow=400)
+kiyv_map.add_edge(u=3,  v=1, distance=1.3,   flow=400)
+kiyv_map.add_edge(u=3,  v=7, distance=1.0,   flow=400)
+kiyv_map.add_edge(u=3,  v=3, distance=0.55,  flow=400)
+kiyv_map.add_edge(u=4,  v=2, distance=0.5,   flow=400)
+kiyv_map.add_edge(u=4,  v=7, distance=1.1,   flow=400)
+kiyv_map.add_edge(u=5,  v=5, distance=0.75,  flow=400)
+kiyv_map.add_edge(u=6,  v=0, distance=5.0,   flow=400)
+kiyv_map.add_edge(u=7,  v=0, distance=1.0,   flow=400)
+kiyv_map.add_edge(u=7,  v=1, distance=2.0,   flow=400)
+kiyv_map.add_edge(u=7,  v=4, distance=1.1,   flow=400)
+kiyv_map.add_edge(u=7,  v=8, distance=1.1,   flow=400)
+kiyv_map.add_edge(u=8,  v=4, distance=0.75,  flow=400)
+kiyv_map.add_edge(u=9,  v=0, distance=2.3,   flow=400)
+kiyv_map.add_edge(u=9,  v=5, distance=0.75,  flow=400)
 kiyv_map.add_edge(u=10, v=1, distance=0.6,  flow=400)
 kiyv_map.add_edge(u=10, v=5, distance=0.8,  flow=400)
 
@@ -97,9 +97,9 @@ def run_algorithm(algorithm, start_node, end_node):
     global kiyv_map
     if algorithm == AvaivableOperations.ford_fulkerson:
         max_flow, path = GraphOperations.ford_fulkerson(kiyv_map, start_node, end_node, return_path=True)
-        
+
+
     print(f"Max flow: {max_flow}")
-    print(path)
     messagebox.showinfo("Max Flow", f"Maximum Flow: {max_flow}")
     GraphOperations.draw_kiyv_map(kiyv_map, paths=path)
 

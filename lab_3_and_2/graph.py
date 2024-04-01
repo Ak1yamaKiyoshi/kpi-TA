@@ -323,7 +323,10 @@ class GraphOperations:
         
         for node in range(kiyv_map.num_nodes):
             pos[node] = np.array(kiyv_map.get_pos(node))
-        
+            try:
+                print(node)
+            except:
+                pass
 
         nx.draw_networkx_nodes(G, pos, node_size=400)
         for lst, color in zip(scc, colors):
