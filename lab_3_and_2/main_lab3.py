@@ -4,6 +4,28 @@ from benchmark import run_benchmark
 from config import Config
 import os
 import numpy as np
+import tkinter as tk
+from tkinter import ttk
+from graph import Graph, GraphOperations
+from utils import AvaivableOperations
+from benchmark import run_benchmark
+
+
+def run_algorithm():
+    selected_algorithm = algorithm_combo.get()
+    if selected_algorithm == "Kosaraju":
+        result_label.config(text=f"Kosaraju's algorithm: {GraphOperations.kosaraju(kiyv_map)}")
+        GraphOperations.draw_kiyv_map(scc=GraphOperations.kosaraju(kiyv_map), kiyv_map=kiyv_map, label="kosaraju")
+
+    elif selected_algorithm == "Tarjan":
+        result_label.config(text=f"Tarjan's algorithm: {GraphOperations.tarjan_scc(kiyv_map)}")
+        GraphOperations.draw_kiyv_map(scc=GraphOperations.tarjan_scc(kiyv_map), kiyv_map=kiyv_map, label="tarjan")
+
+    else:
+        result_label.config(text="Invalid algorithm selection")
+    
+
+
 
 nodes = [
     (1+0, "Червоний університет"),
@@ -25,42 +47,6 @@ except: pass
 
 
 kiyv_map = Graph(11)
-#kiyv_map.add_edge(u=0, v=1, distance=2.0,   flow=400)
-#kiyv_map.add_edge(u=0, v=2, distance=1.7,   flow=400)
-#kiyv_map.add_edge(u=0, v=3, distance=0.9,   flow=400)
-#kiyv_map.add_edge(u=0, v=5, distance=2.5,   flow=400)
-#kiyv_map.add_edge(u=0, v=6, distance=5.0,   flow=400)
-#kiyv_map.add_edge(u=0, v=7, distance=1.0,   flow=400)
-#kiyv_map.add_edge(u=0, v=9, distance=2.5,   flow=400)
-#kiyv_map.add_edge(u=1, v=2, distance=0.6,   flow=400)
-#kiyv_map.add_edge(u=1, v=3, distance=1.3,   flow=400)
-#kiyv_map.add_edge(u=1, v=7, distance=2.0,   flow=400)
-#kiyv_map.add_edge(u=1, v=8, distance=0.95,  flow=400)
-#kiyv_map.add_edge(u=1, v=10, distance=0.6,  flow=400)
-#kiyv_map.add_edge(u=2, v=0, distance=1.7,   flow=400)
-#kiyv_map.add_edge(u=2, v=3, distance=1.0,   flow=400)
-#kiyv_map.add_edge(u=3, v=0, distance=0.9,   flow=400)
-#kiyv_map.add_edge(u=3, v=1, distance=1.3,   flow=400)
-#kiyv_map.add_edge(u=3, v=7, distance=1.0,   flow=400)
-#kiyv_map.add_edge(u=3, v=3, distance=0.55,  flow=400)
-#kiyv_map.add_edge(u=4, v=2, distance=0.5,   flow=400)
-#kiyv_map.add_edge(u=4, v=7, distance=1.1,   flow=400)
-#kiyv_map.add_edge(u=5, v=5, distance=0.75,  flow=400)
-#kiyv_map.add_edge(u=6, v=0, distance=5.0,   flow=400)
-#kiyv_map.add_edge(u=7, v=0, distance=1.0,   flow=400)
-#kiyv_map.add_edge(u=7, v=1, distance=2.0,   flow=400)
-#kiyv_map.add_edge(u=7, v=4, distance=1.1,   flow=400)
-#kiyv_map.add_edge(u=7, v=8, distance=1.1,   flow=400)
-#kiyv_map.add_edge(u=8, v=4, distance=0.75,  flow=400)
-#kiyv_map.add_edge(u=9, v=0, distance=2.3,   flow=400)
-#kiyv_map.add_edge(u=9, v=5, distance=0.75,  flow=400)
-#kiyv_map.add_edge(u=10, v=1, distance=0.6,  flow=400)
-#kiyv_map.add_edge(u=10, v=5, distance=0.8,  flow=400)
-
-#kiyv_map.add_edge(u=0, v=1, distance=2.0,   flow=400)
-#kiyv_map.add_edge(u=0, v=2, distance=1.7,   flow=400)
-#kiyv_map.add_edge(u=0, v=3, distance=0.9,   flow=400)
-#kiyv_map.add_edge(u=0, v=5, distance=2.5,   flow=400)
 kiyv_map.add_edge(u=0, v=6, distance=5.0,   flow=400)
 #kiyv_map.add_edge(u=0, v=7, distance=1.0,   flow=400)
 kiyv_map.add_edge(u=0, v=9, distance=2.5,   flow=400)
@@ -117,6 +103,29 @@ kiyv_map.set_pos(10, (400, 350)),
 #kiyv_map.set_label(11, "Гуртожиток НТУУ КПІ")
 
 
+root = tk.Tk()
+root.title("Algorithm Selection")
+
+# Load your graph (kiyv_map)
+# Your graph initialization code here...
+
+# Algorithm selection
+algorithm_label = ttk.Label(root, text="Select Algorithm:")
+algorithm_label.pack(pady=10)
+algorithm_combo = ttk.Combobox(root, values=["Kosaraju", "Tarjan"])
+algorithm_combo.pack()
+
+# Button to run algorithm
+run_button = ttk.Button(root, text="Run Algorithm", command=run_algorithm)
+run_button.pack(pady=10)
+
+# Result label
+result_label = ttk.Label(root, text="")
+result_label.pack()
+
+root.mainloop()
+
+""" 
 kosaraju = GraphOperations.kosaraju(kiyv_map)
 print(f"Kosaraju's algorithm: {kosaraju}")
 
@@ -125,6 +134,8 @@ print(f"Tarjan's algorithm: {tarjan}")
 GraphOperations.draw_kiyv_map(kiyv_map, scc=tarjan)
 
 
+
+"""
 run_benchmark([
     AvaivableOperations.dfs, # O(n^(V+E))
     AvaivableOperations.ford_fulkerson, #(O(nlog(n^2)))
