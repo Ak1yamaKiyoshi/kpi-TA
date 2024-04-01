@@ -139,6 +139,16 @@ class MainWindow(QMainWindow):
                 with open(file_name, 'r') as file:
                     lines = file.readlines()
                     num_students = len(lines)
+
+                    self.linked_list1 = SingleLinkedList()
+                    self.linked_list1 = SingleLinkedList()
+                    self.report_list1.clear()
+                    self.score_list1.clear()
+                    self.result_list1.clear()
+                    self.report_list2.clear()
+                    self.score_list2.clear()
+                    self.result_list2.clear()
+
                     for i in range(num_students):
                         self.linked_list1.append(lines[i].strip())
                     for i in range(num_students):
@@ -150,7 +160,6 @@ class MainWindow(QMainWindow):
 
     def update_student_info(self, linked_list):
         if linked_list.head is None:
-        
             if linked_list == self.linked_list1:
                 self.student_name_text1.setText("")
                 self.student_score_text1.setText("")

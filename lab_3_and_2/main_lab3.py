@@ -98,7 +98,6 @@ kiyv_map.set_label(9, "Національна\nфілармонія")
 kiyv_map.set_pos(9, (500, 600))
 kiyv_map.set_label(10, "Музей однієї\nвулиці")
 kiyv_map.set_pos(10, (400, 350)), 
-#kiyv_map.set_label(11, "Гуртожиток НТУУ КПІ")
 
 
 root = tk.Tk()
