@@ -120,7 +120,7 @@ class GraphOperations:
 
 
     @classmethod
-    def kosaraju(cls, graph):
+    def algorythm_component_silnoji_zviyaznosty_po_shlyahah(cls, graph):
         visited = [False] * graph.num_nodes
         stack = []
         for i in range(graph.num_nodes):

@@ -13,9 +13,9 @@ from benchmark import run_benchmark
 
 def run_algorithm():
     selected_algorithm = algorithm_combo.get()
-    if selected_algorithm == "Kosaraju":
-        result_label.config(text=f"Kosaraju's algorithm: {GraphOperations.kosaraju(kiyv_map)}")
-        GraphOperations.draw_kiyv_map(scc=GraphOperations.kosaraju(kiyv_map), kiyv_map=kiyv_map, label="kosaraju")
+    if selected_algorithm == "algorythm_component_silnoji_zviyaznosty_po_shlyahah":
+        result_label.config(text=f"algorythm_component_silnoji_zviyaznosty_po_shlyahah algorithm: {GraphOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah(kiyv_map)}")
+        GraphOperations.draw_kiyv_map(scc=GraphOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah(kiyv_map), kiyv_map=kiyv_map, label="algorythm_component_silnoji_zviyaznosty_po_shlyahah")
 
     elif selected_algorithm == "Tarjan":
         result_label.config(text=f"Tarjan's algorithm: {GraphOperations.tarjan_scc(kiyv_map)}")
@@ -39,7 +39,6 @@ nodes = [
     (1+8, "Софія київська"),
     (1+9, "Національна філармонія"),
     (1+10, "Музей однієї вулиці"),
-    (1+11, "Гуртожиток НТУУ КПІ")
 ]
 
 try: os.mkdir(Config.output_dir)
@@ -77,7 +76,6 @@ kiyv_map.add_edge(u=10, v=1, distance=0.6,  flow=400)
 #kiyv_map.add_edge(u=10, v=5, distance=0.8,  flow=400)
 
 
-
 kiyv_map.set_label(0, "Червоний\nуніверситет")
 kiyv_map.set_pos(0, (200, 300))
 kiyv_map.set_label(1, "Андріївська\nцерква")
@@ -106,40 +104,24 @@ kiyv_map.set_pos(10, (400, 350)),
 root = tk.Tk()
 root.title("Algorithm Selection")
 
-# Load your graph (kiyv_map)
-# Your graph initialization code here...
 
-# Algorithm selection
 algorithm_label = ttk.Label(root, text="Select Algorithm:")
 algorithm_label.pack(pady=10)
-algorithm_combo = ttk.Combobox(root, values=["Kosaraju", "Tarjan"])
+algorithm_combo = ttk.Combobox(root, values=["algorythm_component_silnoji_zviyaznosty_po_shlyahah", "Tarjan"])
 algorithm_combo.pack()
 
-# Button to run algorithm
 run_button = ttk.Button(root, text="Run Algorithm", command=run_algorithm)
 run_button.pack(pady=10)
 
-# Result label
 result_label = ttk.Label(root, text="")
 result_label.pack()
 
 root.mainloop()
 
-""" 
-kosaraju = GraphOperations.kosaraju(kiyv_map)
-print(f"Kosaraju's algorithm: {kosaraju}")
-
-tarjan = GraphOperations.tarjan_scc(kiyv_map)
-print(f"Tarjan's algorithm: {tarjan}")
-GraphOperations.draw_kiyv_map(kiyv_map, scc=tarjan)
-
-
-
-"""
 run_benchmark([
     AvaivableOperations.dfs, # O(n^(V+E))
     AvaivableOperations.ford_fulkerson, #(O(nlog(n^2)))
-    AvaivableOperations.kosaraju,
+    AvaivableOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah,
     AvaivableOperations.tarjan,
     AvaivableOperations.transpose, # O(n^3)
     

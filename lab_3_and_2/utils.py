@@ -32,7 +32,7 @@ class AvaivableOperations:
     transpose = "transpose"
     mst = "mst"
     graph_coloring = "graph_coloring"
-    kosaraju = "kosaraju"
+    algorythm_component_silnoji_zviyaznosty_po_shlyahah = "algorythm_component_silnoji_zviyaznosty_po_shlyahah."
     tarjan = "tarjan"
 
 def benchmark(operations=[], max_size=50):
@@ -60,13 +60,12 @@ def benchmark(operations=[], max_size=50):
         if AvaivableOperations.graph_coloring in operations:
             bench_results.append({"operation": "graph_coloring", "time": 
                 benchmark_operation(graph, 'graph_coloring', population), "size": size})
-        if AvaivableOperations.kosaraju in operations:
-            bench_results.append({"operation": "kosaraju (O(n^2 log n))", "time": 
-                benchmark_operation(graph, 'kosaraju ', population), "size": size})
+        if AvaivableOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah in operations:
+            bench_results.append({"operation": "algorythm_component_silnoji_zviyaznosty_po_shlyahah (O(n^2 log n))", "time":
+                benchmark_operation(graph, 'algorythm_component_silnoji_zviyaznosty_po_shlyahah ', population), "size": size})
         if AvaivableOperations.tarjan in operations:
             bench_results.append({"operation": "tarjan (O(n^2 log n))", "time":
                 benchmark_operation(graph, 'tarjan', population), "size": size})
-
     return bench_results
 
 
@@ -80,8 +79,8 @@ def benchmark_operation(graph: Graph, operation: str, iterations):
         time = timeit.timeit(lambda: GraphOperations.minimum_spanning_tree(graph), number=iterations)
     elif operation == "graph_coloring":
         time = timeit.timeit(lambda: GraphOperations.graph_coloring(graph), number=iterations)
-    elif operation == "kosaraju":
-        time = timeit.timeit(lambda: GraphOperations.kosaraju(graph), number=iterations)
+    elif operation == "algorythm_component_silnoji_zviyaznosty_po_shlyahah":
+        time = timeit.timeit(lambda: GraphOperations.algorythm_component_silnoji_zviyaznosty_po_shlyahah(graph), number=iterations)
     elif operation == "tarjan":
         time = timeit.timeit(lambda: GraphOperations.tarjan_scc(graph), number=iterations)
     elif operation == "dfs":
