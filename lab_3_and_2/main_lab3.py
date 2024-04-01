@@ -132,4 +132,4 @@ run_benchmark([
     AvaivableOperations.tarjan,
     AvaivableOperations.transpose, # O(n^3)
     
-])
+], "lab3")

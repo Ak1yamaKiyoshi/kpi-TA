@@ -1,9 +1,10 @@
+import tkinter as tk
+from tkinter import messagebox
 from graph import Graph, GraphOperations
-from utils import random_init_graph, AvaivableOperations
+from utils import AvaivableOperations
 from benchmark import run_benchmark
 from config import Config
 import os
-import numpy as np
 
 nodes = [
     (1+0, "Червоний університет"),
@@ -20,8 +21,6 @@ nodes = [
     (1+11, "Гуртожиток НТУУ КПІ")
 ]
 
-try: os.mkdir(Config.output_dir)
-except: pass    
 
 kiyv_map = Graph(11)
 kiyv_map.add_edge(u=0, v=1, distance=2.0,   flow=400)
@@ -78,19 +77,57 @@ kiyv_map.set_pos(8, (800, 300))
 kiyv_map.set_label(9, "Національна\nфілармонія")
 kiyv_map.set_pos(9, (500, 600))
 kiyv_map.set_label(10, "Музей однієї\nвулиці")
-kiyv_map.set_pos(10, (400, 350)), 
-#kiyv_map.set_label(11, "Гуртожиток НТУУ КПІ")
+kiyv_map.set_pos(10, (400, 350))
 
 
-# lab 2
-max_flow, path = GraphOperations.ford_fulkerson(kiyv_map, 0, kiyv_map.num_nodes - 1, return_path=True)
-print(f"Max flow: {max_flow}")
-print(path)
+try: os.mkdir(Config.output_dir)
+except: pass    
 
-GraphOperations.draw_kiyv_map(kiyv_map, paths=path)
 
-run_benchmark([
-    AvaivableOperations.dfs, # O(n^(V+E))
-    AvaivableOperations.ford_fulkerson, #(O(nlog(n^2)))
-    AvaivableOperations.transpose, # O(n^3)
-])
+def run_selected_algorithm():
+    global kiyv_map
+    start_node = int(selected_start_node.get())
+    end_node = int(selected_end_node.get())
+    if start_node == end_node:
+        messagebox.showerror("Error", "Starting and ending nodes cannot be the same!")
+        return
+
+    run_algorithm(AvaivableOperations.ford_fulkerson, start_node, end_node)
+
+def run_algorithm(algorithm, start_node, end_node):
+    global kiyv_map
+    if algorithm == AvaivableOperations.ford_fulkerson:
+        max_flow, path = GraphOperations.ford_fulkerson(kiyv_map, start_node, end_node, return_path=True)
+        
+    print(f"Max flow: {max_flow}")
+    print(path)
+    messagebox.showinfo("Max Flow", f"Maximum Flow: {max_flow}")
+    GraphOperations.draw_kiyv_map(kiyv_map, paths=path)
+
+root = tk.Tk()
+root.title("Algorithm Selection")
+
+selected_algorithm = tk.StringVar()
+selected_start_node = tk.StringVar()
+selected_end_node = tk.StringVar()
+
+
+tk.Label(root, text="Select Starting Node:").pack()
+
+start_node_frame = tk.Frame(root)
+start_node_frame.pack(side="left")
+
+for node_id, node_name in nodes:
+    tk.Radiobutton(start_node_frame, text=node_name, variable=selected_start_node, value=node_id).pack(anchor="w")
+
+tk.Label(root, text="Select Ending Node:").pack()
+
+end_node_frame = tk.Frame(root)
+end_node_frame.pack(side="right")
+
+for node_id, node_name in nodes:
+    tk.Radiobutton(end_node_frame, text=node_name, variable=selected_end_node, value=node_id).pack(anchor="e")
+
+tk.Button(root, text="Run Algorithm", command=run_selected_algorithm).pack()
+
+root.mainloop()

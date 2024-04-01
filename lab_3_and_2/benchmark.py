@@ -7,7 +7,7 @@ def moving_average(data, window_size):
     """Calculate moving average of data."""
     return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
 
-def run_benchmark(operations=[]):
+def run_benchmark(operations=[], filename:str="l"):
     data = benchmark(operations)
     operations = {}
     for entry in data:
@@ -28,7 +28,7 @@ def run_benchmark(operations=[]):
     plt.title('Performance of Operations by Graph Size (Smoothed)')
     plt.legend()
     plt.grid(True)
-    plt.savefig(Config.output_dir + 'benchmark_smoothed.png')
+    plt.savefig(Config.output_dir + filename + 'benchmark_smoothed.png')
     plt.show()
 
 
