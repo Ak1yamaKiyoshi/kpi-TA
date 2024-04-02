@@ -37,8 +37,9 @@ nodes = [
     (1+10, "Музей однієї вулиці"),
 ]
 
+
 try: os.mkdir(Config.output_dir)
-except: pass    
+except: pass
 
 
 kiyv_map = Graph(11)

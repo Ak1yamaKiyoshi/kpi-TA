@@ -10,8 +10,9 @@ class HashTableApp(tk.Tk):
         self.geometry("400x400")
 
         self.students = {
-            "lemish maxim": datetime.date(2005, 5, 5),
-            "andrii": datetime.date(2004, 9, 6)
+            "vlad bakynez": datetime.date(2005, 5, 5),
+            "mykyta pedko": datetime.date(2005, 5, 5),
+            "Ihor kolosov": datetime.date(2005, 5, 5),
         }
         self.table_size = 25
         self.last_hash_function = None

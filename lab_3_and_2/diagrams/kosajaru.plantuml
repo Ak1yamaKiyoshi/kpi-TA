@@ -1,6 +1,6 @@
 @startuml
 
-' Define start and end nodes
+
 start
 :dfs(graph, node, visited, stack);
 if (stack is not empty?) then (yes)
