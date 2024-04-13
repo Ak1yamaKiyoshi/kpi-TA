@@ -18,6 +18,7 @@ class HashTableApp(tk.Tk):
         self.last_hash_function = None
 
         self.create_widgets()
+        self.create_hash_table(self.last_hash_function)
 
     def create_widgets(self):
         name_label = ttk.Label(self, text="Name:")

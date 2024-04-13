@@ -1,0 +1,14 @@
+@startuml
+start
+:Create new_node with data;
+if (self.head is None <font color=red> // O(1) </font>) then (true)
+    :self.head = new_node;
+else (false)
+    :current = self.head;
+    while (current.next is not None <font color=red> // O(n) </font>) is (true)
+        :current = current.next;
+    endwhile (false)
+    :current.next = new_node;
+endif
+stop
+@enduml

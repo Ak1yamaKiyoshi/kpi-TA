@@ -1,0 +1,11 @@
+@startuml
+start
+if (self.head is None <font color=red> // O(1) </font>)  then (true) 
+    :return None;
+else (false)
+    :removed_data = self.head.data <font color=red> // O(1) </font>;
+    :self.head = self.head.next <font color=red> // O(1) </font>;
+    :return removed_data <font color=red> // O(1) </font>;
+endif
+stop
+@enduml
