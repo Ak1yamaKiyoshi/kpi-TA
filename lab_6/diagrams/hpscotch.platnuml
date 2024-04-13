@@ -1,0 +1,24 @@
+@startuml
+
+title <font color=red> total time complexity: O(n) </font>;
+start
+:hash_index = self.hash1(key);
+if (self.hopscotch_hash_table[hash_index] is None <font color=red> // O(1) </font>) then (true)
+  :self.hopscotch_hash_table[hash_index] = (key, value) <font color=red> // O(1) </font>;
+  :return True;
+else (false)
+  :i = 1;
+  while (i < 5 <font color=red> // O(n) </font>) is (true)
+    :new_index = (hash_index + i) % self.table_size;
+    if (self.hopscotch_hash_table[new_index] is None <font color=red> // O(1) </font>) then (true)
+      :self.hopscotch_hash_table[new_index] = (key, value);
+      :return True;
+    endif
+    :i = i + 1;
+  endwhile
+  :return False;
+endif
+
+stop
+
+@enduml

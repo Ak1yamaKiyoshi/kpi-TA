@@ -1,0 +1,12 @@
+@startuml
+title Hash Multiplication Function
+
+start
+:key;
+:constant;
+:*;
+:table_size;
+:((result % 1));
+:int;
+
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+title Overral time complexity O(n)
+start
+:hash_index = self.hash1(key) <font color=red> // O(1) </font>;
+while (for i in range(5) <font color=red> // O(5) </font>)
+  :new_index = (hash_index + i) % self.table_size <font color=red> // O(1) </font>;
+  if (self.hopscotch_hash_table[new_index] and self.hopscotch_hash_table[new_index][0] == key <font color=red> // O(1) </font>) then (true)
+    :return True;
+  endif
+end while
+:return False;
+stop
+@enduml

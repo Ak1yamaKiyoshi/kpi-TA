@@ -1,0 +1,15 @@
+@startuml
+start
+:hash_index1 = self.hash1(key) <font color=red> // O(1) </font>;
+if (self.cuckoo_hash_table1[hash_index1] and self.cuckoo_hash_table1[hash_index1][0] == key <font color=red> // O(1) </font>) then (true)
+  :return True;
+else (false)
+  :hash_index2 = self.hash2(key) <font color=red> // O(1) </font>;
+  if (self.cuckoo_hash_table2[hash_index2] and self.cuckoo_hash_table2[hash_index2][0] == key <font color=red> // O(1) </font>) then (true)
+    :return True;
+  else (false)
+    :return False;
+  endif
+endif
+stop
+@enduml

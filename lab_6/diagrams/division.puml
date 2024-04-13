@@ -1,0 +1,13 @@
+
+@startuml 1
+title Hash Division Function
+
+start
+:abs(key);
+:key + i;
+:+;
+:table_size;
+:%;
+return (result);
+
+@enduml

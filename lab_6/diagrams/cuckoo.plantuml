@@ -1,0 +1,29 @@
+@startuml
+start
+if (count > self.table_size <font color=red> // O(1) </font>) then (true)
+  :return False;
+else (false)
+  if (table == 1 <font color=red> // O(1) </font>) then (true)
+    :hash_index = self.hash1(key) <font color=red> // O(1) </font>;
+    if (self.cuckoo_hash_table1[hash_index] is None <font color=red> // O(1) </font>) then (true)
+      :self.cuckoo_hash_table1[hash_index] = (key, value) <font color=red> // O(1) </font>;
+      :return True;
+    else (false)
+      :displaced_key, displaced_value = self.cuckoo_hash_table1[hash_index] <font color=red> // O(1) </font>;
+      :self.cuckoo_hash_table1[hash_index] = (key, value) <font color=red> // O(1) </font>;
+      :return self.insert_cuckoo(displaced_key, displaced_value, count + 1, 2) <font color=red> // O(n) </font>;
+    endif
+  else (false)
+    :hash_index = self.hash2(key) <font color=red> // O(1) </font>;
+    if (self.cuckoo_hash_table2[hash_index] is None <font color=red> // O(1) </font>) then (true)
+      :self.cuckoo_hash_table2[hash_index] = (key, value) <font color=red> // O(1) </font>;
+      :return True;
+    else (false)
+      :displaced_key, displaced_value = self.cuckoo_hash_table2[hash_index] <font color=red> // O(1) </font>;
+      :self.cuckoo_hash_table2[hash_index] = (key, value) <font color=red> // O(1) </font>;
+      :return self.insert_cuckoo(displaced_key, displaced_value, count + 1, 1) <font color=red> // O(n) </font>;
+    endif
+  endif
+endif
+stop
+@enduml
