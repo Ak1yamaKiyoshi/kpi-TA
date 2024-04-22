@@ -49,6 +49,20 @@ if __name__ == "__main__":
         multiplication_times.append(multiplication_time)
         list_times.append(list_time)
 
+    theoretical_times = []
+    base_size = table_sizes[0]
+    base_time = 1  
+    scaling_factor = 0.00001 
+
+    for size in table_sizes:
+        ratio = (size / base_size) ** 2
+        time = base_time * ratio * scaling_factor
+        theoretical_times.append(time)
+
+
+
+    plt.plot()
+    plt.plot(table_sizes, theoretical_times, label="O(n^2)")
     plt.plot(table_sizes, division_times, label='Division Hashing')
     plt.plot(table_sizes, multiplication_times, label='Multiplication Hashing')
     plt.plot(table_sizes, list_times, label='List')
