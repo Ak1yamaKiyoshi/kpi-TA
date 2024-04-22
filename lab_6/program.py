@@ -101,7 +101,6 @@ class HashTableApp(tk.Tk):
             if self.cuckoo_hash_table2[hash_index2] and self.cuckoo_hash_table2[hash_index2][0] == name:
                 self.cuckoo_hash_table2[hash_index2] = None
 
-            # Remove from hopscotch hash table
             hash_index = self.hash1(name)
             for i in range(5):  # Check current and next 4 slots for hopscotch
                 new_index = (hash_index + i) % self.table_size

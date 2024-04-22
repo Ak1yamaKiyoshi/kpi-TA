@@ -1,0 +1,29 @@
+@startuml
+start
+:Retrieve name from entry and lowercase it;
+if (name in students?) then (yes)
+  :Remove student from students dictionary;
+  :Calculate hash1 for name;
+  if (cuckoo_hash_table1 at hash1 index contains name?) then (yes)
+    :Set cuckoo_hash_table1 at hash1 index to None;
+  endif
+  :Calculate hash2 for name;
+  if (cuckoo_hash_table2 at hash2 index contains name?) then (yes)
+    :Set cuckoo_hash_table2 at hash2 index to None;
+  endif
+  :Calculate hash1 for name again for hopscotch;
+  while (Check next 5 slots <font color=red>O(n)</font>) is (yes)
+    :Check if name matches in hopscotch table;
+    if (name matches?) then (yes)
+      :Set hopscotch table at current index to None;
+      :Show "Student cleared successfully!" message;
+      stop
+    endif
+  endwhile
+  :Show "Student cleared successfully!" message;
+else (no)
+  :Show "Failed to remove due student is not existing!" message;
+endif
+:Update last action to "Cleared student";
+stop
+@enduml
