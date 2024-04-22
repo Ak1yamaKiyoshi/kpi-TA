@@ -1,0 +1,11 @@
+@startuml
+start
+:Retrieve name from entry;
+    if (name in students | <font color=red>O(1) </font>) then (yes)
+        :Delete student from dictionary <font color=red>O(1) </font>;
+        :Recreate hash table <font color=red>O(1) </font>;
+    else (no)
+        :Display error message <font color=red>O(n^4) </font>;
+    endif
+stop
+@enduml

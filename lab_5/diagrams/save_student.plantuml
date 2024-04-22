@@ -1,0 +1,12 @@
+@startuml
+:start;
+:get name from name_entry;
+if (name in students O(1)) then (yes)
+  :showerror "Error", "Name already exists!";
+else (no)
+  :get birthdate from date_picker;
+  :students[name] = birthdate;
+  :create_hash_table(last_hash_function);
+endif
+stop
+@enduml

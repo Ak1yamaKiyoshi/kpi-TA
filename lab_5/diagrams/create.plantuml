@@ -1,0 +1,40 @@
+@startuml
+:start;
+:set last_hash_function;
+:create hash_table with size table_size;
+while (foreach name, birthdate in students <font color=red>O(n^3) </font>)
+  :calculate hash_code for name;
+  :calculate initial index;
+  :i = 1;
+  while (hash_table[index] is not None <font color=red>O(n^2) </font>)
+    :index = hash_function(hash_code, i, table_size);
+    :i = i + 1;
+    if (i > table_size) then (yes)
+      :table_size = table_size + 1;
+      :create new_hash_table with size table_size;
+      while (foreach item in hash_table <font color=red>O(n^2) </font>)
+        if (item is not None) then (yes)
+          :calculate new_hash_code for item[0];
+          :calculate new_index for new_hash_code;
+          :new_i = 1;
+          while (new_hash_table[new_index] is not None <font color=red>O(n) </font>)
+            :new_index = hash_function(new_hash_code, new_i, table_size);
+            :new_i = new_i + 1;
+          endwhile (new_hash_table[new_index] is None)
+          :new_hash_table[new_index] = item;
+        endif
+      endwhile (no more items in hash_table)
+      :hash_table = new_hash_table;
+    endif 
+  endwhile 
+  :hash_table[index] = (name, birthdate);
+endwhile (no more students)
+:create output string;
+while (foreach item in hash_table <font color=red>O(n) </font>)
+  if (item is not None) then (yes)
+    :append item[0] to output;
+  endif 
+endwhile
+:display output in result_text;
+stop
+@enduml
