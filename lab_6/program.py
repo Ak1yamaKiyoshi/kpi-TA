@@ -20,7 +20,7 @@ class HashTableApp(tk.Tk):
         self.geometry("400x400")
 
         self.students = {}
-        self.table_size = 25
+        self.table_size = 2500
         # Separate hash tables for each hashing technique
         self.cuckoo_hash_table1 = [None] * self.table_size
         self.cuckoo_hash_table2 = [None] * self.table_size
@@ -71,7 +71,7 @@ class HashTableApp(tk.Tk):
     def hash2(self, key):
         return (abs(hash(key)) * 5) % self.table_size
 
-    def save_student(self):
+    def save_student(self, send_messagebox=True):
         name = self.name_entry.get().lower()
         birthdate = self.date_picker.get_date()
         #if name in self.students:
@@ -79,17 +79,20 @@ class HashTableApp(tk.Tk):
         #    return
         self.students[name] = birthdate
         
-        if not self.insert_cuckoo(name, birthdate):
-            messagebox.showerror("Error", "Failed to insert in Cuckoo Hashing, rehashing needed!")
+        if not self.insert_cuckoo(name, birthdate, send_messagebox):
+            if send_messagebox:
+                messagebox.showerror("Error", "Failed to insert in Cuckoo Hashing, rehashing needed!")
             return
-        if not self.insert_hopscotch(name, birthdate):
-            messagebox.showerror("Error", "Failed to insert in Hopscotch Hashing, table might be full!")
+        if not self.insert_hopscotch(name, birthdate, send_messagebox):
+            if send_messagebox:
+                messagebox.showerror("Error", "Failed to insert in Hopscotch Hashing, table might be full!")
             return
-        messagebox.showinfo("Success", "Student saved successfully!")
-        self.update_last_action("Saved student")
+        if send_messagebox:
+            messagebox.showinfo("Success", "Student saved successfully!")
+            self.update_last_action("Saved student")
 
 
-    def clear_student(self):
+    def clear_student(self, send_messagebox=False):
         name = self.name_entry.get().lower()
         if name in self.students:
             del self.students[name]
@@ -101,6 +104,7 @@ class HashTableApp(tk.Tk):
             if self.cuckoo_hash_table2[hash_index2] and self.cuckoo_hash_table2[hash_index2][0] == name:
                 self.cuckoo_hash_table2[hash_index2] = None
 
+            # Remove from hopscotch hash table
             hash_index = self.hash1(name)
             for i in range(5):  # Check current and next 4 slots for hopscotch
                 new_index = (hash_index + i) % self.table_size
@@ -109,12 +113,13 @@ class HashTableApp(tk.Tk):
                     messagebox.showinfo("Success", "Student cleared successfully!")
                     break
         else: 
-            messagebox.showerror("Error", "Failed to remove due student is not exitsting!")
+            if send_messagebox:
+                messagebox.showerror("Error", "Failed to remove due student is not exitsting!")
+        if send_messagebox:
+            self.update_last_action("Cleared student")
 
-        self.update_last_action("Cleared student")
 
-
-    def insert_cuckoo(self, key, value, count=0, table=1):
+    def insert_cuckoo(self, key, value, count=0, table=1, send_messagebox=True):
         if count > self.table_size:
             return False
         if table == 1:
@@ -136,7 +141,7 @@ class HashTableApp(tk.Tk):
                 self.cuckoo_hash_table2[hash_index] = (key, value)
                 return self.insert_cuckoo(displaced_key, displaced_value, count + 1, 1)
 
-    def insert_hopscotch(self, key, value):
+    def insert_hopscotch(self, key, value ,send_messagebox=True):
         hash_index = self.hash1(key)
         if self.hopscotch_hash_table[hash_index] is None:
             self.hopscotch_hash_table[hash_index] = (key, value)
@@ -149,48 +154,52 @@ class HashTableApp(tk.Tk):
                     return True
         return False 
 
-    def search_student(self):
+    def search_student(self, send_messagebox=True):
         name = self.name_entry.get().lower()
         if name not in self.students:
-            messagebox.showinfo("Search Result", "Student not found!")
+            if send_messagebox:
+                messagebox.showinfo("Search Result", "Student not found!")
             return
         birthdate = self.students[name]
         found_in_cuckoo = self.search_cuckoo(name)
         found_in_hopscotch = self.search_hopscotch(name)
-        if found_in_cuckoo:
+        if found_in_cuckoo and send_messagebox:
             messagebox.showinfo("Search Result", f"Student found in Cuckoo Hashing: {name}, {birthdate}")
-        elif found_in_hopscotch:
+        elif found_in_hopscotch and send_messagebox:
             messagebox.showinfo("Search Result", f"Student found in Hopscotch Hashing: {name}, {birthdate}")
-        else:
+        elif send_messagebox:
             messagebox.showinfo("Search Result", "Student not found in any hashing method!")
 
         name = self.name_entry.get().lower()
-        if name not in self.students:
+        if name not in self.students and send_messagebox:
             self.update_last_action("Search: Student not found")
-        else:
+        elif send_messagebox:
             self.update_last_action(f"Search: Found {name}")
 
 
 
-    def search_cuckoo(self, key):
+    def search_cuckoo(self, key, send_messagebox=True):
         hash_index1 = self.hash1(key)
         if self.cuckoo_hash_table1[hash_index1] and self.cuckoo_hash_table1[hash_index1][0] == key:
             return True
         hash_index2 = self.hash2(key)
         if self.cuckoo_hash_table2[hash_index2] and self.cuckoo_hash_table2[hash_index2][0] == key:
-            self.update_last_action("Success search in cuckoo")
+            
             return True
-        self.update_last_action("Failed search in cuckoo")
+        if send_messagebox:
+            self.update_last_action("Failed search in cuckoo")
         return False
 
-    def search_hopscotch(self, key):
+    def search_hopscotch(self, key, send_messagebox=True):
         hash_index = self.hash1(key)
         for i in range(5):  # Check current and next 4 slots
             new_index = (hash_index + i) % self.table_size
             if self.hopscotch_hash_table[new_index] and self.hopscotch_hash_table[new_index][0] == key:
-                self.update_last_action("Success search in hopscotch")
+                if send_messagebox:
+                    self.update_last_action("Success search in hopscotch")
                 return True
-        self.update_last_action("Failed search in hopscotch")
+        if send_messagebox:
+            self.update_last_action("Failed search in hopscotch")
         return False
 
     def display_cuckoo_hashing(self):
