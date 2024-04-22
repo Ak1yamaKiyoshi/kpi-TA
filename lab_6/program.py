@@ -58,6 +58,13 @@ class HashTableApp(tk.Tk):
         self.result_text = tk.Text(self, width=40, height=10)
         self.result_text.pack(pady=5)
 
+        self.last_action_label = ttk.Label(self, text="Last action: None")
+        self.last_action_label.pack(pady=5)
+
+    def update_last_action(self, action):
+        self.last_action_label.config(text=f"Last action: {action}")
+
+
     def hash1(self, key):
         return abs(hash(key)) % self.table_size
 
@@ -79,11 +86,34 @@ class HashTableApp(tk.Tk):
             messagebox.showerror("Error", "Failed to insert in Hopscotch Hashing, table might be full!")
             return
         messagebox.showinfo("Success", "Student saved successfully!")
+        self.update_last_action("Saved student")
+
 
     def clear_student(self):
-        self.name_entry.delete(0, tk.END)
-        self.date_picker.set_date(datetime.date.today())
-        self.result_text.delete("1.0", tk.END)
+        name = self.name_entry.get().lower()
+        if name in self.students:
+            del self.students[name]
+            # Remove from cuckoo hash tables
+            hash_index1 = self.hash1(name)
+            if self.cuckoo_hash_table1[hash_index1] and self.cuckoo_hash_table1[hash_index1][0] == name:
+                self.cuckoo_hash_table1[hash_index1] = None
+            hash_index2 = self.hash2(name)
+            if self.cuckoo_hash_table2[hash_index2] and self.cuckoo_hash_table2[hash_index2][0] == name:
+                self.cuckoo_hash_table2[hash_index2] = None
+
+            # Remove from hopscotch hash table
+            hash_index = self.hash1(name)
+            for i in range(5):  # Check current and next 4 slots for hopscotch
+                new_index = (hash_index + i) % self.table_size
+                if self.hopscotch_hash_table[new_index] and self.hopscotch_hash_table[new_index][0] == name:
+                    self.hopscotch_hash_table[new_index] = None
+                    messagebox.showinfo("Success", "Student cleared successfully!")
+                    break
+        else: 
+            messagebox.showerror("Error", "Failed to remove due student is not exitsting!")
+
+        self.update_last_action("Cleared student")
+
 
     def insert_cuckoo(self, key, value, count=0, table=1):
         if count > self.table_size:
@@ -135,13 +165,23 @@ class HashTableApp(tk.Tk):
         else:
             messagebox.showinfo("Search Result", "Student not found in any hashing method!")
 
+        name = self.name_entry.get().lower()
+        if name not in self.students:
+            self.update_last_action("Search: Student not found")
+        else:
+            self.update_last_action(f"Search: Found {name}")
+
+
+
     def search_cuckoo(self, key):
         hash_index1 = self.hash1(key)
         if self.cuckoo_hash_table1[hash_index1] and self.cuckoo_hash_table1[hash_index1][0] == key:
             return True
         hash_index2 = self.hash2(key)
         if self.cuckoo_hash_table2[hash_index2] and self.cuckoo_hash_table2[hash_index2][0] == key:
+            self.update_last_action("Success search in cuckoo")
             return True
+        self.update_last_action("Failed search in cuckoo")
         return False
 
     def search_hopscotch(self, key):
@@ -149,7 +189,9 @@ class HashTableApp(tk.Tk):
         for i in range(5):  # Check current and next 4 slots
             new_index = (hash_index + i) % self.table_size
             if self.hopscotch_hash_table[new_index] and self.hopscotch_hash_table[new_index][0] == key:
+                self.update_last_action("Success search in hopscotch")
                 return True
+        self.update_last_action("Failed search in hopscotch")
         return False
 
     def display_cuckoo_hashing(self):
@@ -162,6 +204,7 @@ class HashTableApp(tk.Tk):
                 output += f"Table 2 - {i}: {item[0]}, {item[1]}\n"
         self.result_text.delete("1.0", tk.END)
         self.result_text.insert(tk.END, output)
+        self.update_last_action("Displayed Hopscotch Hashing")
 
     def display_hopscotch_hashing(self):
         output = "Hopscotch Hashing:\n"
@@ -171,6 +214,8 @@ class HashTableApp(tk.Tk):
                 output += f"Table - {i} [Hop: {hop_info}]: {item[0]}, {item[1]}\n"
         self.result_text.delete("1.0", tk.END)
         self.result_text.insert(tk.END, output)
+        self.update_last_action("Displayed Cuckoo Hashing")
+
 
     def calculate_hop_information(self, current_index, original_hash):
         return abs(current_index - original_hash)
