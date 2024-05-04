@@ -1,40 +1,5 @@
-import time
-import matplotlib.pyplot as plt
+import tkinter as tk
 import random
-import numpy as np
-
-def shell_sort(ship_list):
-    n = len(ship_list)
-    gap = n // 2
-    while gap > 0:
-        for i in range(gap, n):
-            temp = ship_list[i]
-            j = i
-            while j >= gap and ship_list[j - gap].num_matroses > temp.num_matroses:
-                ship_list[j] = ship_list[j - gap]
-                j -= gap
-            ship_list[j] = temp
-        gap //= 2
-
-
-def bubble_sort(ship_list):
-    n = len(ship_list)
-    for i in range(n):
-        for j in range(0, n - i - 1):
-            if ship_list[j].num_matroses > ship_list[j + 1].num_matroses:
-                ship_list[j], ship_list[j + 1] = ship_list[j + 1], ship_list[j]
-
-
-def counting_sort(ship_list):
-    max_matroses = max(ship.num_matroses for ship in ship_list)
-    counts = [0] * (max_matroses + 1)
-    for ship in ship_list:
-        counts[ship.num_matroses] += 1
-    sorted_ships = []
-    for i in range(len(counts)):
-        sorted_ships.extend([Ship(i)] * counts[i])
-    ship_list[:] = sorted_ships
-
 
 class Ship:
     def __init__(self, num_matroses):
@@ -43,79 +8,103 @@ class Ship:
     def __str__(self):
         return f"Ship with {self.num_matroses} matroses"
 
+class ShipSortGUI(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Ship Sorting GUI")
+        
+        self.ship_list = []
+        self.movements = []
+        
+        self.ship_listbox = tk.Listbox(self, width=50, height=20)
+        self.ship_listbox.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        self.movements_text = tk.Text(self, width=50, height=20)
+        self.movements_text.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        self.sort_alg_var = tk.StringVar()
+        self.sort_alg_var.set("Shell Sort")
+        
+        self.sort_menu = tk.OptionMenu(self, self.sort_alg_var, "Shell Sort", "Bubble Sort", "Counting Sort")
+        self.sort_menu.pack(side=tk.TOP, padx=10, pady=10)
+        
+        self.shuffle_button = tk.Button(self, text="Shuffle", command=self.shuffle_ships)
+        self.shuffle_button.pack(side=tk.TOP, padx=10, pady=10)
+        
+        self.sort_button = tk.Button(self, text="Sort", command=self.sort_ships)
+        self.sort_button.pack(side=tk.TOP, padx=10, pady=10)
+        
+        self.add_ship_button = tk.Button(self, text="Add Ship", command=self.add_ship)
+        self.add_ship_button.pack(side=tk.TOP, padx=10, pady=10)
+        
 
-# Function to measure time taken by a sorting algorithm
-def measure_time(func, ship_list):
-    start_time = time.time()
-    func(ship_list)
-    end_time = time.time()
-    return end_time - start_time
+    def add_ship(self):
+        num_matroses = random.randint(10, 100)  # Random number of matroses for demonstration
+        ship = Ship(num_matroses)
+        self.ship_list.append(ship)
+        self.ship_listbox.insert(tk.END, str(ship))
+        
+    def shuffle_ships(self):
+        random.shuffle(self.ship_list)
+        self.update_ship_listbox()
+        
+    def update_ship_listbox(self):
+        self.ship_listbox.delete(0, tk.END)
+        for ship in self.ship_list:
+            self.ship_listbox.insert(tk.END, str(ship))
+        
+    def sort_ships(self):
+        self.movements = []
+        sort_alg = self.sort_alg_var.get()
+        if sort_alg == "Shell Sort":
+            self.shell_sort()
+        elif sort_alg == "Bubble Sort":
+            self.bubble_sort()
+        elif sort_alg == "Counting Sort":
+            self.counting_sort()
+        self.display_movements()
+            
+    def shell_sort(self):
+        n = len(self.ship_list)
+        gap = n // 2
+        while gap > 0:
+            for i in range(gap, n):
+                temp = self.ship_list[i]
+                j = i
+                while j >= gap and self.ship_list[j - gap].num_matroses > temp.num_matroses:
+                    self.ship_list[j] = self.ship_list[j - gap]
+                    j -= gap
+                    self.movements.append((j - gap, j))
+                self.ship_list[j] = temp
+            gap //= 2
+        
+    def bubble_sort(self):
+        n = len(self.ship_list)
+        for i in range(n):
+            for j in range(0, n - i - 1):
+                if self.ship_list[j].num_matroses > self.ship_list[j + 1].num_matroses:
+                    self.ship_list[j], self.ship_list[j + 1] = self.ship_list[j + 1], self.ship_list[j]
+                    self.movements.append((j + 1, j))
+                    
+    def counting_sort(self):
+        max_matroses = max(ship.num_matroses for ship in self.ship_list)
+        counts = [[] for _ in range(max_matroses + 1)]
+        for i, ship in enumerate(self.ship_list):
+            counts[ship.num_matroses].append(i)
+        sorted_ships = []
+        for i, indices in enumerate(counts):
+            for idx in indices:
+                sorted_ships.append(self.ship_list[idx])
+                self.movements.append((idx, len(sorted_ships) - 1))
+        self.ship_list = sorted_ships
+        self.update_ship_listbox()
 
-
-# Benchmarking function for Bubble Sort
-def benchmark_bubble_sort(ship_list_sizes):
-    bubble_sort_times = []
-    for size in ship_list_sizes:
-        ship_list = [Ship(random.randint(10, 100)) for _ in range(size)]
-        bubble_sort_time = measure_time(bubble_sort, ship_list)
-        bubble_sort_times.append(bubble_sort_time)
-    return bubble_sort_times
-
-
-# Benchmarking function for Shell Sort
-def benchmark_shell_sort(ship_list_sizes):
-    shell_sort_times = []
-    for size in ship_list_sizes:
-        ship_list = [Ship(random.randint(10, 100)) for _ in range(size)]
-        shell_sort_time = measure_time(shell_sort, ship_list)
-        shell_sort_times.append(shell_sort_time)
-    return shell_sort_times
-
-
-# Benchmarking function for Counting Sort
-def benchmark_counting_sort(ship_list_sizes):
-    counting_sort_times = []
-    for size in ship_list_sizes:
-        ship_list = [Ship(random.randint(10, 100)) for _ in range(size)]
-        counting_sort_time = measure_time(counting_sort, ship_list)
-        counting_sort_times.append(counting_sort_time)
-    return counting_sort_times
-
-
-# Function to plot benchmarking results
-def plot_results(ship_list_sizes, times, title, filename, scaling_factor):
-    plt.figure()
-    plt.plot(ship_list_sizes, times, label="Measured Time")
-    
-    theoretical_times = []
-    base_size = ship_list_sizes[0]
-    base_time = times[0]  # Base time from measured data
-    
-    for size in ship_list_sizes:
-        ratio = (size / base_size) ** 2
-        time = base_time * ratio * scaling_factor
-        theoretical_times.append(time)
-    
-    plt.plot(ship_list_sizes, theoretical_times, label="Theoretical Time")
-    
-    plt.title(title)
-    plt.xlabel("Ship List Size")
-    plt.ylabel("Time (seconds)")
-    plt.legend()
-    plt.savefig("images/"+filename)
-
+                
+    def display_movements(self):
+        self.movements_text.delete(1.0, tk.END)
+        for movement in self.movements:
+            self.movements_text.insert(tk.END, f"ship#: {movement[0]:2} -> ship# {movement[1]:2}\n")
+        
 if __name__ == "__main__":
-    ship_list_sizes = [10, 100, 1000]  # Adjust the list sizes as needed
-    scaling_factors = [0.001, 0.001, 0.001]  # Adjust scaling factors for each algorithm
-
-    # Benchmarking Bubble Sort
-    bubble_sort_times = benchmark_bubble_sort(ship_list_sizes)
-    plot_results(ship_list_sizes, bubble_sort_times, "Bubble Sort Benchmark", "bubble_sort_benchmark.png", scaling_factors[0])
-
-    # Benchmarking Shell Sort
-    shell_sort_times = benchmark_shell_sort(ship_list_sizes)
-    plot_results(ship_list_sizes, shell_sort_times, "Shell Sort Benchmark", "shell_sort_benchmark.png", scaling_factors[1])
-
-    # Benchmarking Counting Sort
-    counting_sort_times = benchmark_counting_sort(ship_list_sizes)
-    plot_results(ship_list_sizes, counting_sort_times, "Counting Sort Benchmark", "counting_sort_benchmark.png", scaling_factors[2])
+    app = ShipSortGUI()
+    app.mainloop()
