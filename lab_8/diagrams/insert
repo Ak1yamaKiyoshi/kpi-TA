@@ -1,0 +1,32 @@
+@startuml
+start
+
+: new_node = RBNode(key);
+: parent = None;
+: current = self.root;
+
+while (current != self.nil <font color=red size=16>**O(n)**</font>)
+    : parent = current;
+    if (key < current.key) then (yes)
+        : current = current.left;
+    else (no)
+        : current = current.right;
+    endif
+endwhile (no)
+
+if (parent == None) then (yes)
+    : self.root = new_node;
+elseif (key < parent.key) then (yes)
+    : parent.left = new_node;
+else (no)
+    : parent.right = new_node;
+endif
+
+: new_node.left = self.nil;
+: new_node.right = self.nil;
+: new_node.color = "Red";
+
+: self.insert_fixup(new_node);
+
+stop
+@enduml

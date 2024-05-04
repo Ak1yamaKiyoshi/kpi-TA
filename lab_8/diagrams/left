@@ -1,0 +1,25 @@
+@startuml
+
+start
+
+: y = x.right <font color=red>// O(1)</font>;
+: x.right = y.left <font color=red>// O(1)</font>;
+if (y.left != self.nil) then (yes)
+    : y.left.parent = x <font color=red>// O(1)</font>;
+endif
+
+: y.parent = x.parent <font color=red>// O(1)</font>;
+if (x.parent == null <font color=red>// O(1)</font>) then (yes)
+    : self.root = y; <font color=red>// O(1)</font>;
+elseif (x == x.parent.left) then (yes)
+    : x.parent.left = y; <font color=red>// O(1)</font>;
+else (no)
+    : x.parent.right = y; <font color=red>// O(1)</font>;
+endif
+
+: y.left = x <font color=red>// O(1)</font>;
+: x.parent = y <font color=red>// O(1)</font>;
+
+stop
+
+@enduml
