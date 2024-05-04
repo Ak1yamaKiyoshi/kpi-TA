@@ -123,6 +123,7 @@ class HashTableApp(tk.Tk):
         if count > self.table_size:
             return False
         if table == 1:
+            # Перехешування
             hash_index = self.hash1(key)
             if self.cuckoo_hash_table1[hash_index] is None:
                 self.cuckoo_hash_table1[hash_index] = (key, value)
@@ -132,6 +133,7 @@ class HashTableApp(tk.Tk):
                 self.cuckoo_hash_table1[hash_index] = (key, value)
                 return self.insert_cuckoo(displaced_key, displaced_value, count + 1, 2)
         else:
+            # Перехешування
             hash_index = self.hash2(key)
             if self.cuckoo_hash_table2[hash_index] is None:
                 self.cuckoo_hash_table2[hash_index] = (key, value)
@@ -147,7 +149,7 @@ class HashTableApp(tk.Tk):
             self.hopscotch_hash_table[hash_index] = (key, value)
             return True
         else:
-            for i in range(1, 5):
+            for i in range(1, self.table_size):
                 new_index = (hash_index + i) % self.table_size
                 if self.hopscotch_hash_table[new_index] is None:
                     self.hopscotch_hash_table[new_index] = (key, value)

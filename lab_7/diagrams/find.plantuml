@@ -1,0 +1,17 @@
+@startuml
+skinparam defaultFontName Arial
+
+start
+
+if (node is None) then (yes)
+  :<font color=red>Return None;</font> (**O(1)**);
+elseif (node.value == value) then (yes)
+  :<font color=red>Return node;</font> (**O(1)**);
+elseif (value < node.value) then (yes)
+  :<font color=red>Recursive call to self._find_node();</font> (**O(n)**);
+else (no)
+  :<font color=red>Recursive call to self._find_node();</font> (**O(n)**);
+endif
+
+stop
+@enduml

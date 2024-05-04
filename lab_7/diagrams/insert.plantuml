@@ -1,0 +1,23 @@
+@startuml
+skinparam defaultFontName Arial
+
+start
+
+if (value < node.value) then (yes)
+  :<font color=red>Check if node.left is None;</font> (**O(1)**);
+  if (node.left is None) then (yes)
+    :<font color=red>Create new Node;</font> (**O(1)**);
+  else (no)
+    :<font color=red>Recursive call to self._insert();</font> (**O(n)**);
+  endif
+else (no)
+  :<font color=red>Check if node.right is None;</font> (**O(1)**);
+  if (node.right is None) then (yes)
+    :<font color=red>Create new Node;</font> (**O(1)**);
+  else (no)
+    :<font color=red>Recursive call to self._insert();</font> (**O(n)**);
+  endif
+endif
+
+stop
+@enduml
