@@ -1,0 +1,21 @@
+@startuml
+
+start
+
+:n = len(self.ship_list) <font color=red> (1) </font>;
+:gap = n // 2<font color=red> (1) </font>;
+while (while gap > 0 <font color=red> (n^3) </font>)
+  while (for i in range(gap, n) <font color=red> (n^2) </font>)
+    :temp = self.ship_list[i] <font color=red> (1) </font>;
+    :j = i <font color=red> (1) </font>;
+    while( while j >= gap and self.ship_list[j - gap].num_matroses > temp.num_matroses  <font color=red> (n) </font>)
+      :self.ship_list[j] = self.ship_list[j - gap] <font color=red> (1) </font>;
+      :j -= gap<font color=red> (1) </font>;
+    endwhile
+    :self.ship_list[j] = temp <font color=red> (1) </font>;
+  endwhile
+  :gap //= 2 <font color=red> (1) </font>;
+endwhile
+
+stop
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+
+start
+
+
+
+:n = lenght of ship list<font color=red> . </font>;
+while (i=0; i < n; i++ <font color=red> O(n^2) </font>)
+  while (j=0; j < n - i - 1; j++ <font color=red> O(n) </font>)
+    if (shiplist[j].number_matroces > shiplist[j+1].number_matroces <font color=red> O(1) </font>)
+      :swap shiplist[j], shiplist[j+1] <font color=red> (1) </font> ;
+    endif
+  endwhile
+endwhile
+
+stop
+@enduml

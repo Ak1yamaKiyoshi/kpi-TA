@@ -1,0 +1,23 @@
+@startuml
+
+start
+
+
+:max_matroses = max(ship.num_matroses for ship in self.ship_list) <font color=red> (1) </font>;
+:counts = [0] * (max_matroses + 1)  <font color=red> (1) </font>;
+
+while (while ship in self.ship_list <font color=red> (n) </font>)
+  :counts[ship.num_matroses] += 1;
+endwhile
+:sorted_ships = []  <font color=red> (1) </font>;
+
+while (for i in range(len(counts)) <font color=red> (n) </font>)
+  :sorted_ships.extend([Ship(i)] * counts[i]) <font color=red> (1) </font>;
+endwhile
+:self.ship_list = sorted_ships <font color=red> (1) </font>;
+
+while (for i in range(1, len(self.ship_list)) <font color=red> (n) </font>)
+  :self.movements.append((i, i - 1)) <font color=red> (1) </font>;
+endwhile
+stop
+@enduml
