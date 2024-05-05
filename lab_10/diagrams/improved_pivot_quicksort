@@ -1,0 +1,12 @@
+@startuml
+
+start
+
+:Choose pivot element;
+:Swap pivot with the last element;
+:Partition the array around the pivot using improved pivot partition function <font color=red> O(n) </font>;
+:Recursively apply quicksort to the left partition <font color=red> T(k) </font>;
+:Recursively apply quicksort to the right partition <font color=red> T(n-k-1) </font>;
+stop
+
+@enduml

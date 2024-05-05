@@ -1,0 +1,11 @@
+@startuml
+
+start
+
+:Choose pivot element;
+:Partition the array into three parts: smaller, equal, and greater elements than the pivot using three-way partition function <font color=red> O(n) </font>;
+:Recursively apply quicksort to the smaller part <font color=red> T(k) </font>;
+:Recursively apply quicksort to the greater part <font color=red> T(n-k-1) </font>;
+stop
+
+@enduml

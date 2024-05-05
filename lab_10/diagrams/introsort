@@ -1,0 +1,12 @@
+@startuml
+
+start
+
+:Choose pivot element;
+:Partition the array around the pivot using standard partition function <font color=red> O(n) </font>;
+:If depth limit is reached, switch to heapsort <font color=red> O(n log n) </font>;
+:Recursively apply introsort to the left partition <font color=red> T(n/2) </font>;
+:Recursively apply introsort to the right partition <font color=red> T(n/2) </font>;
+stop
+
+@enduml
