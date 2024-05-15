@@ -11,8 +11,9 @@ class TreeVisualizer(tk.Tk):
 
         input_frame = tk.Frame(self)
         input_frame.pack(pady=10)
-
         self.input_field = tk.Entry(input_frame)
+        self.input_field.insert(0, "1") 
+
         self.input_field.pack(side=tk.LEFT)
 
         submit_button = tk.Button(input_frame, text="Submit", command=self.submit_input)
@@ -27,19 +28,14 @@ class TreeVisualizer(tk.Tk):
         for ship in initial_tree_arr:
             self.tree.insert(ship)
 
-        self.draw_tree()
+        self.canvas.delete("all")
+        self.draw_tree([])
 
     def submit_input(self):
         pirate_ship = int(self.input_field.get())
         results = self.tree.get_ship_size(pirate_ship)
         self.tree = results['tree']
-        self.tree.display()
         path = results['path']
-        element_to_highlight = results['new_ship']
-        error = results['error']
-        print(error, path)
-
-
         self.canvas.delete("all")
         self.draw_tree(path)
 
@@ -79,4 +75,5 @@ class TreeVisualizer(tk.Tk):
 
 if __name__ == "__main__":
     app = TreeVisualizer()
+    app.submit_input()
     app.mainloop()

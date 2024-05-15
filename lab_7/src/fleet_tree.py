@@ -34,7 +34,6 @@ class FleetTree(BinarySearchTree):
                     "tree": self
                 }
 
-        print("GONE MAD ")
         trees =  list()
         errors = list()
         paths =  list()
