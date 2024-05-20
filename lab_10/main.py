@@ -1,5 +1,7 @@
 import tkinter as tk
 import random
+update=sorted
+
 
 
 class Ship:
@@ -26,6 +28,9 @@ class Ship:
     
     def __ge__(self, other):
         return self.num_matroses >= other.num_matroses
+
+    def __repr__(self) -> str:
+        return str(self.num_matroses)
 
 
 class ShipSortGUI(tk.Tk):
@@ -70,6 +75,7 @@ class ShipSortGUI(tk.Tk):
         
     def update_ship_listbox(self):
         self.ship_listbox.delete(0, tk.END)
+        update(self.ship_list)
         for ship in self.ship_list:
             self.ship_listbox.insert(tk.END, str(ship))
         
@@ -77,20 +83,28 @@ class ShipSortGUI(tk.Tk):
         self.movements = []  
         self.update_ship_listbox()
         sort_alg = self.sort_alg_var.get()
-        if sort_alg == "Stable Quicksort":
-            self.stable_quicksort(0, len(self.ship_list) - 1)
-        elif sort_alg == "Improved Pivot Quicksort":
-            self.improved_pivot_quicksort(0, len(self.ship_list) - 1)
-        elif sort_alg == "Random Pivot Quicksort":
-            self.random_pivot_quicksort(0, len(self.ship_list) - 1)
-        elif sort_alg == "Three-way Quicksort":
-            self.three_way_quicksort(0, len(self.ship_list) - 1)
-        elif sort_alg == "Introsort":
-            self.introsort(0, len(self.ship_list) - 1)
-        elif sort_alg == "Optimized Quicksort":
-            self.optimized_quicksort(0, len(self.ship_list) - 1)
-        self.update_ship_listbox()
-        self.display_movements()
+
+        if sorted(self.ship_list.copy()) == self.ship_list:
+            self.update_ship_listbox() 
+            self.movements = []
+            self.display_movements()    
+        else:
+            if sort_alg == "Stable Quicksort":
+                self.stable_quicksort(0, len(self.ship_list) - 1)
+            elif sort_alg == "Improved Pivot Quicksort":
+                self.improved_pivot_quicksort(0, len(self.ship_list) - 1)
+            elif sort_alg == "Random Pivot Quicksort":
+                self.random_pivot_quicksort(0, len(self.ship_list) - 1)
+            elif sort_alg == "Three-way Quicksort":
+                self.three_way_quicksort(0, len(self.ship_list) - 1)
+            elif sort_alg == "Introsort":
+                self.introsort(0, len(self.ship_list) - 1)
+            elif sort_alg == "Optimized Quicksort":
+                self.optimized_quicksort(0, len(self.ship_list) - 1)
+
+            update(self.ship_list)
+            self.update_ship_listbox()
+            self.display_movements()
         
     def stable_quicksort(self, low, high):
         if low < high:
@@ -107,13 +121,15 @@ class ShipSortGUI(tk.Tk):
             pivot_index = i + 1
             self.stable_quicksort(low, pivot_index - 1)
             self.stable_quicksort(pivot_index + 1, high)
-    
+
     def improved_pivot_quicksort(self, low, high):
         if low < high:
+            print(f"Sorting subarray: {self.ship_list[low:high+1]}")
             pivot = self.get_improved_pivot(low, high)
+            print(f"Pivot: {pivot.num_matroses}")
             i = low - 1
             for j in range(low, high):
-                if self.ship_list[j].num_matroses <= pivot.num_matroses:
+                if self.ship_list[j].num_matroses < pivot.num_matroses:
                     i += 1
                     self.ship_list[i], self.ship_list[j] = self.ship_list[j], self.ship_list[i]
                     self.movements.append((j, i))
@@ -123,13 +139,14 @@ class ShipSortGUI(tk.Tk):
             pivot_index = i + 1
             self.improved_pivot_quicksort(low, pivot_index - 1)
             self.improved_pivot_quicksort(pivot_index + 1, high)
+        else:
+            print(f"Base case: {self.ship_list[low:high+1]}")
             
     def get_improved_pivot(self, low, high):
-        first = self.ship_list[low]
-        middle = self.ship_list[(low + high) // 2]
-        last = self.ship_list[high]
-        return sorted([first, middle, last])[1]
-    
+        subarray = sorted(self.ship_list[low:high+1], key=lambda ship: ship.num_matroses)
+        median_index = (high - low + 1) // 2
+        return subarray[median_index]
+        
     def random_pivot_quicksort(self, low, high):
         if low < high:
             pivot_idx = random.randint(low, high)
@@ -261,4 +278,4 @@ class ShipSortGUI(tk.Tk):
         
 if __name__ == "__main__":
     app = ShipSortGUI()
-    app.mainloop()
+    app.mainloop()# 
