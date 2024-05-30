@@ -20,13 +20,21 @@ def shell_sort(ship_list):
 
 def bubble_sort(ship_list):
     n = len(ship_list)
+
     for i in range(n):
+        flag = False
         for j in range(0, n - i - 1):
+            
             if ship_list[j].num_matroses > ship_list[j + 1].num_matroses:
+                flag = True
                 ship_list[j], ship_list[j + 1] = ship_list[j + 1], ship_list[j]
+        if not flag:break
 
 
 def counting_sort(ship_list):
+    if not ship_list:
+        return []  # Return an empty list if the input is empty
+
     max_matroses = max(ship.num_matroses for ship in ship_list)
     counts = [0] * (max_matroses + 1)
     for ship in ship_list:
@@ -53,70 +61,78 @@ def measure_time(func, ship_list):
     return end_time - start_time
 
 
-# Benchmarking function for Bubble Sort
-def benchmark_bubble_sort(ship_list_sizes):
-    bubble_sort_times = []
+# Benchmarking function for Sorting Algorithms
+def benchmark_sorting(sorting_func, ship_list_sizes, num_similar_levels):
+    results = []
     for size in tqdm(ship_list_sizes):
-        ship_list = [Ship(random.randint(10, 100)) for _ in range(size)]
-        bubble_sort_time = measure_time(bubble_sort, ship_list)
-        bubble_sort_times.append(bubble_sort_time)
-    return bubble_sort_times
+        for similar_level in num_similar_levels:
+            for case in ['half_sorted', 'unsorted', 'reversed']:
+                ship_list = generate_ship_list(size, case, similar_level)
+                sorting_time = measure_time(sorting_func, ship_list)
+                results.append((size, similar_level, case, sorting_time))
+    return results
 
 
-# Benchmarking function for Shell Sort
-def benchmark_shell_sort(ship_list_sizes):
-    shell_sort_times = []
-    for size in tqdm(ship_list_sizes):
-        ship_list = [Ship(random.randint(10, 100)) for _ in range(size)]
-        shell_sort_time = measure_time(shell_sort, ship_list)
-        shell_sort_times.append(shell_sort_time)
-    return shell_sort_times
+# Function to generate ship lists with different cases
+def generate_ship_list(size, case, num_similar):
+    if size == 0:
+        return []  # Return an empty list if the size is 0
 
-
-# Benchmarking function for Counting Sort
-def benchmark_counting_sort(ship_list_sizes):
-    counting_sort_times = []
-    for size in tqdm(ship_list_sizes):
-        ship_list = [Ship(random.randint(10, 100)) for _ in range(size)]
-        counting_sort_time = measure_time(counting_sort, ship_list)
-        counting_sort_times.append(counting_sort_time)
-    return counting_sort_times
+    if case == 'half_sorted':
+        unsorted_list = [Ship(random.randint(10, 10000)) for _ in range(size // 2)]
+        sorted_list = sorted([Ship(random.randint(10, 10000)) for _ in range(size - size // 2)], key=lambda x: x.num_matroses)
+        return unsorted_list + sorted_list
+    elif case == 'unsorted':
+        return [Ship(random.randint(10, 10000)) for _ in range(size)]
+    elif case == 'reversed':
+        return sorted([Ship(random.randint(10, 10000)) for _ in range(size)], key=lambda x: x.num_matroses, reverse=True)
+    elif case == 'similar':
+        if num_similar > size:
+            num_similar = size
+        random_val = random.randint(10, 10000)
+        values = [random_val for _ in range(num_similar)]
+        ships = []
+        for v in values:
+            ships.extend([Ship(v)] * (size // num_similar))
+        ships.extend([Ship(random.randint(10, 10000)) for _ in range(size % num_similar)])
+        
+        return np.random.shuffle(ships)
 
 
 # Function to plot benchmarking results
-def plot_results(ship_list_sizes, times, title, filename, scaling_factor):
-    plt.figure()
-    plt.plot(ship_list_sizes, times, label="Measured Time")
-    
-    theoretical_times = []
-    base_size = ship_list_sizes[0]
-    base_time = times[0]  # Base time from measured data
-    
-    for size in ship_list_sizes:
-        ratio = (size / base_size) ** 2
-        time = base_time * ratio * scaling_factor
-        theoretical_times.append(time)
-    
-    plt.plot(ship_list_sizes, theoretical_times, label="O(n^2)")
-    
-    plt.title(title)
-    plt.xlabel("Ship List Size")
-    plt.ylabel("Time (seconds)")
-    plt.legend()
-    plt.savefig("images/"+filename)
+def plot_results(results, title, filename, sorting_func):
+    plt.figure(figsize=(17, 4))
+    sizes = sorted(set([r[0] for r in results]))
+    similar_levels = set([r[1] for r in results])
+
+    for case in ['half_sorted', 'unsorted', 'reversed']:
+        plt.subplot(1, 3, ['half_sorted', 'unsorted', 'reversed'].index(case) + 1)
+        plt.title(f"{case.replace('_', ' ').title()} Case")
+        plt.xlabel("Ship List Size")
+        plt.ylabel("Time (seconds)")
+
+        for similar_level in similar_levels:
+            times = [r[3] for r in results if r[0] in sizes and r[1] == similar_level and r[2] == case]
+            plt.plot(sizes, times, label=f"Similar: {similar_level}", marker=',')
+
+        plt.legend()
+
+    plt.suptitle(f"{sorting_func.__name__.replace('_', ' ').title()} Sort Benchmark")
+    plt.tight_layout()
+    plt.savefig(f"images/{filename}")
+
 
 if __name__ == "__main__":
-    ship_list_sizes = [i for i in range (1, 600)]  # Adjust the list sizes as needed
-    scaling_factors = [0.05, 0.0045, 0.00003]  # Adjust scaling factors for each algorithm
-
+    ship_list_sizes = [i * 5 for i in range(250)]  # [100, 500, 1000, 5000, 10000]  # Adjust the list sizes as needed
+    num_similar_levels = [ 0, 500]
     # Benchmarking Bubble Sort
-    bubble_sort_times = benchmark_bubble_sort(ship_list_sizes)
-    plot_results(ship_list_sizes, bubble_sort_times, "Bubble Sort Benchmark", "bubble_sort_benchmark.png", scaling_factors[0])
+    bubble_sort_results = benchmark_sorting(bubble_sort, ship_list_sizes, num_similar_levels)
+    plot_results(bubble_sort_results, "bubble_sort_benchmark.png", "bubble_sort_benchmark.png", bubble_sort)
 
     # Benchmarking Shell Sort
-    shell_sort_times = benchmark_shell_sort(ship_list_sizes)
-    plot_results(ship_list_sizes, shell_sort_times, "Shell Sort Benchmark", "shell_sort_benchmark.png", scaling_factors[1])
+    shell_sort_results = benchmark_sorting(shell_sort, ship_list_sizes, num_similar_levels)
+    plot_results(shell_sort_results, "shell_sort_benchmark.png", "shell_sort_benchmark.png", shell_sort)
 
     # Benchmarking Counting Sort
-    counting_sort_times = benchmark_counting_sort(ship_list_sizes)
-    plot_results(ship_list_sizes, counting_sort_times, "Counting Sort Benchmark", "counting_sort_benchmark.png", scaling_factors[2])
+    counting_sort_results = benchmark_sorting(counting_sort, ship_list_sizes, num_similar_levels)
+    plot_results(counting_sort_results, "counting_sort_benchmark.png", "counting_sort_benchmark.png", counting_sort)

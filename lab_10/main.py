@@ -4,6 +4,35 @@ update=sorted
 
 
 
+
+def partition_threway(arr, first, last, start, mid):
+     
+    pivot = arr[last]
+    end = last
+     
+    # Iterate while mid is not greater than end.
+    while (mid[0] <= end):
+         
+        # Inter Change position of element at the starting if it's value is less than pivot.
+        if (arr[mid[0]] < pivot):
+             
+            arr[mid[0]], arr[start[0]] = arr[start[0]], arr[mid[0]]
+             
+            mid[0] = mid[0] + 1
+            start[0] = start[0] + 1
+             
+        # Inter Change position of element at the end if it's value is greater than pivot.
+        elif (arr[mid[0]] > pivot):
+             
+            arr[mid[0]], arr[end] = arr[end], arr[mid[0]]
+             
+            end = end - 1
+             
+        else:
+            mid[0] = mid[0] + 1
+ 
+ 
+ 
 class Ship:
     def __init__(self, num_matroses):
         self.num_matroses = num_matroses
@@ -73,6 +102,12 @@ class ShipSortGUI(tk.Tk):
         random.shuffle(self.ship_list)
         self.update_ship_listbox()
         
+    def introsort(self, *args):
+        
+        maxdepth = (len(self.ship_list).bit_length() - 1)*2
+        self.introsort_helper(self.ship_list, 0, len(self.ship_list), maxdepth)
+    
+ 
     def update_ship_listbox(self):
         self.ship_listbox.delete(0, tk.END)
         update(self.ship_list)
@@ -98,7 +133,7 @@ class ShipSortGUI(tk.Tk):
             elif sort_alg == "Three-way Quicksort":
                 self.three_way_quicksort(0, len(self.ship_list) - 1)
             elif sort_alg == "Introsort":
-                self.introsort(0, len(self.ship_list) - 1)
+                self.introsort(self.ship_list, 0, len(self.ship_list) - 1)
             elif sort_alg == "Optimized Quicksort":
                 self.optimized_quicksort(0, len(self.ship_list) - 1)
 
@@ -165,49 +200,36 @@ class ShipSortGUI(tk.Tk):
             self.random_pivot_quicksort(low, pivot_index - 1)
             self.random_pivot_quicksort(pivot_index + 1, high)
 
-    def three_way_quicksort(self, low, high):
-        if low < high:
-            pivot = self.ship_list[high]
-            i = low
-            while i <= high:
-                if self.ship_list[i].num_matroses < pivot.num_matroses:
-                    self.ship_list[low], self.ship_list[i] = self.ship_list[i], self.ship_list[low]
-                    self.movements.append((i, low))
-                    low += 1
-                    i += 1
-                elif self.ship_list[i].num_matroses == pivot.num_matroses:
-                    i += 1
-                else:
-                    self.ship_list[i], self.ship_list[high] = self.ship_list[high], self.ship_list[i]
-                    self.movements.append((i, high))
-                    high -= 1
-
-            self.three_way_quicksort(low, high - 1)
-            self.three_way_quicksort(i + 1, high)
+    def three_way_quicksort(self, first,last):
+    # First case when an array contain only 1 element
+        if (first >= last): 
+            return
+        
+        # Second case when an array contain only 2 elements
+        if (last == first + 1):
             
-    def introsort(self, low, high, max_depth=None):
-        if max_depth is None:
-            max_depth = 2 * (high - low + 1).bit_length()
-
-        if low < high:
-            if max_depth == 0:
-                self.heap_sort(low, high)
-                return
-            else:
-                pivot = self.get_improved_pivot(low, high)
-                i = low - 1
-                for j in range(low, high):
-                    if self.ship_list[j].num_matroses <= pivot.num_matroses:
-                        i += 1
-                        self.ship_list[i], self.ship_list[j] = self.ship_list[j], self.ship_list[i]
-                        self.movements.append((j, i))
-                self.ship_list[i + 1], self.ship_list[high] = self.ship_list[high], self.ship_list[i + 1]
-                self.movements.append((high, i + 1))
-
-                pivot_index = i + 1
-                self.introsort(low, pivot_index - 1, max_depth - 1)
-                self.introsort(pivot_index + 1, high, max_depth - 1)
+            if (self.ship_listarr[first] > self.ship_list[last]):
                 
+                self.ship_list[first], self.ship_list[last] = self.ship_list[last], self.ship_list[first]
+                self.movements.append((first, last))
+                
+                return
+    
+        # Third case when an array contain more than 2 elements
+        start = [first]
+        mid = [first]
+    
+        # Function to partition the array.
+        partition_threway(self.ship_list, first, last, start, mid)
+        
+        # Recursively sort sublist containing elements that are less than the pivot.
+        self.stable_quicksort(first, start[0] - 1)
+    
+        # Recursively sort sublist containing elements that are more than the pivot
+        self.stable_quicksort(mid[0], last)
+                
+    
+    
     def heap_sort(self, low, high):
         def heapify(n, i):
             largest = i
@@ -233,7 +255,79 @@ class ShipSortGUI(tk.Tk):
             self.ship_list[i], self.ship_list[0] = self.ship_list[0], self.ship_list[i]
             self.movements.append((0, i))
             heapify(i, 0)
+
+
+
+    def introsort_helper(self, alist, start, end, maxdepth):
+        if end - start <= 1:
+            return
+        elif maxdepth == 0:
+            self.heapsort(alist, start, end)
+        else:
+            p = self.partition(alist, start, end)
+            self.introsort_helper(alist, start, p + 1, maxdepth - 1)
+            self.introsort_helper(alist, p + 1, end, maxdepth - 1)
+    
+    def partition(self, alist, start, end):
+        pivot = alist[start]
+        i = start - 1
+        j = end
+    
+        while True:
+            i = i + 1
+            while alist[i] < pivot:
+                i = i + 1
+            j = j - 1
+            while alist[j] > pivot:
+                j = j - 1
+    
+            if i >= j:
+                return j
+    
+            self.swap(alist, i, j)
+    
+    def swap(self, alist, i, j):
+        self.movements.append((i, j))
+        alist[i], alist[j] = alist[j], alist[i]
+    
+    def heapsort(self, alist, start, end):
+        self.build_max_heap(alist, start, end)
+        for i in range(end - 1, start, -1):
+            self.swap(alist, start, i)
+            self.max_heapify(alist, index=0, start=start, end=i)
             
+    
+    def build_max_heap(self, alist, start, end):
+        def parent(i):
+            return (i - 1)//2
+        length = end - start
+        index = parent(length - 1)
+        while index >= 0:
+            self.max_heapify(alist, index, start, end)
+            index = index - 1
+    
+    def max_heapify(self, alist, index, start, end):
+        def left(i):
+            return 2*i + 1
+        def right(i):
+            return 2*i + 2
+    
+        size = end - start
+        l = left(index)
+        r = right(index)
+        if (l < size and alist[start + l] > alist[start + index]):
+            largest = l
+        else:
+            largest = index
+        if (r < size and alist[start + r] > alist[start + largest]):
+            largest = r
+        if largest != index:
+            self.swap(alist, start + largest, start + index)
+            
+            self.max_heapify(alist, largest, start, end)
+    
+    
+
     def optimized_quicksort(self, low, high):
         while low < high:
             if high - low > 16:
