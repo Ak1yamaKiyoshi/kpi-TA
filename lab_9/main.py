@@ -53,6 +53,7 @@ class ShipSortGUI(tk.Tk):
         for ship in self.ship_list:
             self.ship_listbox.insert(tk.END, str(ship))
         
+        
     def sort_ships(self):
         self.movements = []
         sort_alg = self.sort_alg_var.get()
@@ -63,6 +64,7 @@ class ShipSortGUI(tk.Tk):
         elif sort_alg == "Counting Sort":
             self.counting_sort()
         self.display_movements()
+        self.update_ship_listbox()
             
     def shell_sort(self):
         n = len(self.ship_list)

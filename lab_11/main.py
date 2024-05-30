@@ -235,7 +235,11 @@ class App(tk.Tk):
 
     def visualize_sorting(self):
         for step in self.viz_steps:
-            operation, idx1, idx2, val1, val2 = step
+            try:
+                operation, idx1, idx2, val1, val2, *args = step
+            except:
+                operation, idx1, idx2 = step
+
             if operation == 'c':
                 self.viz_text.insert(tk.END, f"Compared {val1} and {val2}\n")
             elif operation == 's':
@@ -255,16 +259,32 @@ class App(tk.Tk):
         self.message_text.insert(tk.END, message)
 
 # Клас тестувань
+import random
+import time
+import matplotlib.pyplot as plt
+
 class TestingSorts:
     def __init__(self):
-        self.array_lengths = [10, 100, 1000, 10000, 100000, 1000000]  # Додано більше замірів
+        self.array_lengths = [i*4 for i in range(500)]
         self.merge_sort_times = []
         self.smooth_sort_times = []
         self.quick_sort_times = []
+        self.merge_sort_times_random = []
+        self.smooth_sort_times_random = []
+        self.quick_sort_times_random = []
+        self.merge_sort_times_partially_sorted = []
+        self.smooth_sort_times_partially_sorted = []
+        self.quick_sort_times_partially_sorted = []
+        self.merge_sort_times_repeated = []
+        self.smooth_sort_times_repeated = []
+        self.quick_sort_times_repeated = []
 
     def test_sorting(self):
         for length in self.array_lengths:
             arr = [random.randint(0, 1000000) for _ in range(length)]
+            arr_random = arr.copy()
+            arr_partially_sorted = sorted(arr_random[:length // 2]) + arr_random[length // 2:]
+            arr_repeated = [random.randint(0, 100) for _ in range(length // 10)] * 10
 
             # Merge Sort
             start_time = time.time()
@@ -272,11 +292,41 @@ class TestingSorts:
             end_time = time.time()
             self.merge_sort_times.append(end_time - start_time)
 
+            start_time = time.time()
+            Sortings.merge_sort(arr_random.copy())
+            end_time = time.time()
+            self.merge_sort_times_random.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.merge_sort(arr_partially_sorted.copy())
+            end_time = time.time()
+            self.merge_sort_times_partially_sorted.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.merge_sort(arr_repeated.copy())
+            end_time = time.time()
+            self.merge_sort_times_repeated.append(end_time - start_time)
+
             # Smooth Sort
             start_time = time.time()
             Sortings.smooth_sort(arr.copy())
             end_time = time.time()
             self.smooth_sort_times.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.smooth_sort(arr_random.copy())
+            end_time = time.time()
+            self.smooth_sort_times_random.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.smooth_sort(arr_partially_sorted.copy())
+            end_time = time.time()
+            self.smooth_sort_times_partially_sorted.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.smooth_sort(arr_repeated.copy())
+            end_time = time.time()
+            self.smooth_sort_times_repeated.append(end_time - start_time)
 
             # Quick Sort
             start_time = time.time()
@@ -284,11 +334,35 @@ class TestingSorts:
             end_time = time.time()
             self.quick_sort_times.append(end_time - start_time)
 
+            start_time = time.time()
+            Sortings.quick_sort(arr_random.copy())
+            end_time = time.time()
+            self.quick_sort_times_random.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.quick_sort(arr_partially_sorted.copy())
+            end_time = time.time()
+            self.quick_sort_times_partially_sorted.append(end_time - start_time)
+
+            start_time = time.time()
+            Sortings.quick_sort(arr_repeated.copy())
+            end_time = time.time()
+            self.quick_sort_times_repeated.append(end_time - start_time)
+
     def plot_results(self):
         plt.figure(figsize=(10, 6))
         plt.plot(self.array_lengths, self.merge_sort_times, label="Merge Sort")
         plt.plot(self.array_lengths, self.smooth_sort_times, label="Smooth Sort")
         plt.plot(self.array_lengths, self.quick_sort_times, label="Quick Sort")
+        plt.plot(self.array_lengths, self.merge_sort_times_random, label="Merge Sort (Random)")
+        plt.plot(self.array_lengths, self.smooth_sort_times_random, label="Smooth Sort (Random)")
+        plt.plot(self.array_lengths, self.quick_sort_times_random, label="Quick Sort (Random)")
+        plt.plot(self.array_lengths, self.merge_sort_times_partially_sorted, label="Merge Sort (Partially Sorted)")
+        plt.plot(self.array_lengths, self.smooth_sort_times_partially_sorted, label="Smooth Sort (Partially Sorted)")
+        plt.plot(self.array_lengths, self.quick_sort_times_partially_sorted, label="Quick Sort (Partially Sorted)")
+        plt.plot(self.array_lengths, self.merge_sort_times_repeated, label="Merge Sort (Repeated)")
+        plt.plot(self.array_lengths, self.smooth_sort_times_repeated, label="Smooth Sort (Repeated)")
+        plt.plot(self.array_lengths, self.quick_sort_times_repeated, label="Quick Sort (Repeated)")
         plt.xlabel("Array Length")
         plt.ylabel("Time (seconds)")
         plt.title("Sorting Algorithm Performance")
