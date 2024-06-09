@@ -1,0 +1,49 @@
+@startuml
+title Red-Black Tree Operations
+
+start
+
+:Initialize Red-Black Tree;
+
+partition Insertion {
+    :Get new node <font color=red> // O(1) </font>;
+    if (Node is ROOT<font color=red> // O(1) </font>) then (yes)
+        :Set node color as BLACK <font color=red> // O(1) </font>;
+    else (no)
+        :Insert node as in BST <font color=red> // O(1) </font>;
+        :Fix Red-Black properties <font color=red> // O(1) </font>;
+    endif
+}
+
+partition Search {
+    :Start from ROOT;
+    while (Node is not NULL and key != Node.key <font color=red> // O(n) </font>) is (yes)
+        if (key < Node.key <font color=red> // O(1) </font>) then (yes)
+            :Move to left child;
+        else (no <font color=red> // O(1) </font>)
+            :Move to right child;
+        endif
+    endwhile
+    if (Node is NULL <font color=red> // O(1) </font>) then (yes)
+        :Key not found <font color=red> // O(1) </font>;
+    else (no)
+        :Key found;
+    endif
+}
+
+partition Deletion {
+    :Search for node with given key <font color=red> // O(1) </font>;
+    if (Node found <font color=red> // O(1) </font>) then (yes)
+        if (Node has 0 or 1 child <font color=red> // O(1) </font>) then (yes)
+            :Replace node with child <font color=red> // O(1) </font>;
+        else (no <font color=red> // O(1) </font>)
+            :Replace node with in-order successor <font color=red> // O(1) </font>;
+            :Fix Red-Black properties <font color=red> // O(1) </font>;
+        endif
+    else (no)
+        :Key not  found<font color=red> // O(1) </font>;
+    endif
+}
+
+stop
+@enduml
