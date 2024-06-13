@@ -19,7 +19,7 @@ class TreeVisualizer(tk.Tk):
         submit_button = tk.Button(input_frame, text="Submit", command=self.submit_input)
         submit_button.pack(side=tk.LEFT, padx=10)
 
-        self.canvas = tk.Canvas(self, width=600, height=500, bg="white")
+        self.canvas = tk.Canvas(self, width=1200, height=500, bg="white")
         self.canvas.pack(pady=10)
 
         self.tree = FleetTree()
@@ -32,10 +32,10 @@ class TreeVisualizer(tk.Tk):
         self.draw_tree([])
 
     def submit_input(self):
-        pirate_ship = int(self.input_field.get())
-        results = self.tree.get_ship_size(pirate_ship)
-        self.tree = results['tree']
-        path = results['path']
+        pirate_ship = eval(self.input_field.get())
+        
+        _, path = self.tree.get_ship_size(pirate_ship)
+        
         self.canvas.delete("all")
         self.draw_tree(path)
 
@@ -43,7 +43,7 @@ class TreeVisualizer(tk.Tk):
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
         node_radius = 20
-        horizontal_spacing = 50
+        horizontal_spacing = 150
         vertical_spacing = 50
         self.draw_node(self.tree.get_root(), canvas_width // 2, 20, node_radius, highlight)
         self.draw_subtree(self.tree.get_root(), canvas_width // 2, 20, horizontal_spacing, vertical_spacing, node_radius, path, highlight)

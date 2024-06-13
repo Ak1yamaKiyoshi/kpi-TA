@@ -4,7 +4,6 @@ import time
 import random
 import matplotlib.pyplot as plt
 from src.node import Node
-import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 import numpy as np
 

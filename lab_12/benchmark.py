@@ -93,7 +93,7 @@ def plot_results(results, title, filename, sorting_func):
 
 
 if __name__ == "__main__":
-    ship_list_sizes = [i * 5 for i in range(2, 250)]  # [100, 500, 1000, 5000, 10000]  # Adjust the list sizes as needed
+    ship_list_sizes = [i * 5 for i in range(2, 100)]  # [100, 500, 1000, 5000, 10000]  # Adjust the list sizes as needed
     num_similar_levels = [ 0, 500]
 
     bubble_sort_results = benchmark_sorting(lsd_radixsort, ship_list_sizes, num_similar_levels)

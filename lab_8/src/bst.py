@@ -42,6 +42,8 @@ class BinarySearchTree:
             return new_node
         else:
             return None
+        
+        
     def remove(self, value):
         def min(pointer):
             while pointer.left:

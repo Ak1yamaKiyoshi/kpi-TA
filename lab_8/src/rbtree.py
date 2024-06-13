@@ -277,6 +277,7 @@ class RedBlackTree():
 
     # Balance the tree after insertion
     def fix_insert(self: T, node: Node) -> None:
+        print("CALLED FIX INSERT")
         while node.parent.is_red():
             if node.parent == node.parent.parent.right:
                 u = node.parent.parent.left
@@ -409,7 +410,6 @@ class RedBlackTree():
 
         y = None
         x = self.root
-        print(x)
 
         while not x.is_null():
             y = x
@@ -428,12 +428,17 @@ class RedBlackTree():
 
         self.size += 1
 
+
         if node.parent is None:
             node.set_color("black")
+            print("a")
             return
 
         if node.parent.parent is None:
+            print("b")
             return
+        
+        print("CALLING FIX INSERT ")
 
         self.fix_insert(node)
 
@@ -455,6 +460,19 @@ class RedBlackTree():
         left = self.max_sum(pointer.left, summ+pointer.value)
         right = self.max_sum(pointer.right, summ+pointer.value)
         return max(left, right)
+
+    def display_highlight(self, to_remove=None, pointer:Node=False, space=0, level=4):
+        if pointer == False: pointer = self.get_root()
+        if (pointer == None): return
+        space += level
+        self.display_highlight(to_remove, pointer.right, space)
+        for i in range(level, space): print(end = '\033[92m' + " ")  
+        if pointer.value != to_remove:
+            print('\033[93m' + "[" + '\033[0m' + str(pointer.value) + '\033[93m' + "]<")
+        else: 
+            print('\033[93m' + "[" + '\033[91m' + str(pointer.value) + '\033[93m' + "]<")
+        self.display_highlight(to_remove, pointer.left, space)
+        print("" + '\033[0m', end="")
 
 
     def get_all_paths(self, pointer=False, path=None, complete_paths=None):

@@ -9,20 +9,83 @@ class BinarySearchTree:
     def get_root(self):
         return self.__root
 
-    def insert(self, value):
-        if (self.__root == None):
-            self.__root = Node(value=value, parent=None)
+    def rotate_left(self, node):
+        if node is None or node.right is None:
             return
-        pointer = self.__root
-        while True:
-            if value < pointer.value and pointer.left:
-                pointer = pointer.left
-            elif value >= pointer.value and pointer.right:
-                pointer = pointer.right
-            else: break
 
-        if pointer.value > value: pointer.left = Node(value, pointer)
-        else: pointer.right = Node(value, pointer)
+        new_root = node.right
+        node.right = new_root.left
+        if new_root.left is not None:
+            new_root.left.parent = node
+        new_root.parent = node.parent
+        if node.parent is None:
+            self.__root = new_root
+        elif node == node.parent.left:
+            node.parent.left = new_root
+        else:
+            node.parent.right = new_root
+        new_root.left = node
+        node.parent = new_root
+
+    def rotate_right(self, node):
+        if node is None or node.left is None:
+            return
+
+        new_root = node.left
+        node.left = new_root.right
+        if new_root.right is not None:
+            new_root.right.parent = node
+        new_root.parent = node.parent
+        if node.parent is None:
+            self.__root = new_root
+        elif node == node.parent.right:
+            node.parent.right = new_root
+        else:
+            node.parent.left = new_root
+        new_root.right = node
+        node.parent = new_root
+
+    def insert(self, value):
+        if self.__root is None:
+            self.__root = Node(value)
+            return
+
+        def _insert_recursive(node, value):
+            if value < node.value:
+                if node.left is None:
+                    node.left = Node(value, parent=node)
+                else:
+                    _insert_recursive(node.left, value)
+            else:
+                if node.right is None:
+                    node.right = Node(value, parent=node)
+                else:
+                    _insert_recursive(node.right, value)
+
+            node.balance_factor = self._calculate_balance_factor(node)
+
+            if node.balance_factor > 1:
+                if value < node.left.value:
+                    self.rotate_right(node)
+                else:
+                    self.rotate_left(node)
+            elif node.balance_factor < -1:
+                if value > node.right.value:
+                    self.rotate_left(node)
+                else:
+                    self.rotate_right(node)
+
+        _insert_recursive(self.__root, value)
+
+    def _calculate_height(self, node):
+        if node is None:
+            return 0
+        return 1 + max(self._calculate_height(node.left), self._calculate_height(node.right))
+
+    def _calculate_balance_factor(self, node):
+        return self._calculate_height(node.left) - self._calculate_height(node.right)
+
+
 
     def copy(self):
         new_tree = self.__class__()
@@ -125,8 +188,6 @@ class BinarySearchTree:
         out.append(pointer.value)        
 
         return out  
-
-  
 
         return out
     def binarySearch(self, value, pointer=False):
