@@ -19,11 +19,16 @@ class Graph:
         self._position = (None, None)
 
 
-    def add_edge(self, u, v, distance, flow):
-        self.distances[u][v] = distance
-        self.distances[v][u] = distance
-        self.flows[u][v] = flow
-        self.flows[v][u] = flow
+    def add_edge(self, u, v, distance, flow, one_way=False):
+        if not one_way:
+            self.distances[u][v] = distance
+            self.distances[v][u] = distance
+            self.flows[u][v] = flow
+            self.flows[v][u] = flow
+        else:
+            self.distances[u][v] = distance
+            self.flows[u][v] = flow
+
 
     def remove_edge(self, u, v):
         self.distances[u][v] = np.inf
@@ -119,6 +124,24 @@ class GraphOperations:
         return transposed_graph
 
 
+
+    @classmethod
+    def dfs(cls, graph, node, visited, stack):
+        visited[node] = True
+        for neighbor in range(graph.num_nodes):
+            if graph.distances[node][neighbor] != float('inf') and not visited[neighbor]:
+                cls.dfs(graph, neighbor, visited, stack)
+        stack.append(node)
+
+    @staticmethod
+    def transpose(graph):
+        transposed_graph = Graph(graph.num_nodes)
+        for i in range(graph.num_nodes):
+            for j in range(graph.num_nodes):
+                if graph.distances[i][j] != float('inf'):
+                    transposed_graph.add_edge(j, i, graph.distances[i][j], graph.flows[i][j])
+        return transposed_graph
+
     @classmethod
     def algorythm_component_silnoji_zviyaznosty_po_shlyahah(cls, graph):
         visited = [False] * graph.num_nodes
@@ -130,7 +153,6 @@ class GraphOperations:
         transposed_graph = cls.transpose(graph)
 
         visited = [False] * graph.num_nodes
-
         scc_list = []
         while stack:
             current_node = stack.pop()
@@ -138,10 +160,49 @@ class GraphOperations:
                 scc = []
                 cls.dfs(transposed_graph, current_node, visited, scc)
                 scc_list.append(scc)
-
         return scc_list
 
+    @classmethod
+    def tarjan_scc(cls, graph):
+        graph.index = 0
+        graph.stack = []
+        graph.scc_list = []
+        graph.index_tracker = [None] * graph.num_nodes
+        graph.low_link = [None] * graph.num_nodes
+        graph.on_stack = [False] * graph.num_nodes
 
+        for node in range(graph.num_nodes):
+            if graph.index_tracker[node] is None:
+                cls.tarjan_dfs(graph, node)
+
+        return graph.scc_list
+
+    @classmethod
+    def tarjan_dfs(cls, graph, node):
+        graph.index_tracker[node] = graph.index
+        graph.low_link[node] = graph.index
+        graph.index += 1
+        graph.stack.append(node)
+        graph.on_stack[node] = True
+
+        for neighbor in range(graph.num_nodes):
+            if graph.distances[node][neighbor] != float('inf'):
+                if graph.index_tracker[neighbor] is None:
+                    cls.tarjan_dfs(graph, neighbor)
+                    graph.low_link[node] = min(graph.low_link[node], graph.low_link[neighbor])
+                elif graph.on_stack[neighbor]:
+                    graph.low_link[node] = min(graph.low_link[node], graph.index_tracker[neighbor])
+
+        if graph.low_link[node] == graph.index_tracker[node]:
+            scc = []
+            while True:
+                popped_node = graph.stack.pop()
+                scc.append(popped_node)
+                graph.on_stack[popped_node] = False
+                if popped_node == node:
+                    break
+            graph.scc_list.append(scc)
+            
     @staticmethod
     def graph_coloring(graph):
         colors = {}
@@ -225,49 +286,6 @@ class GraphOperations:
             return max_flow, paths
         return max_flow
 
-
-    @classmethod
-    def tarjan_scc(cls, graph: Graph):
-        graph.index = 0
-        graph.stack = []
-        graph.scc_list = []
-        graph.index_tracker = [None] * graph.num_nodes
-        graph.low_link = [None] * graph.num_nodes
-        graph.on_stack = [False] * graph.num_nodes
-
-        for node in range(graph.num_nodes):
-            if graph.index_tracker[node] is None:
-                cls.tarjan_dfs(graph, node)
-
-        return graph.scc_list
-
-
-    @classmethod
-    def tarjan_dfs(cls, graph, node):
-        graph.index_tracker[node] = graph.index
-        graph.low_link[node] = graph.index
-        graph.index += 1
-        graph.stack.append(node)
-        graph.on_stack[node] = True
-
-        for neighbor in range(graph.num_nodes):
-            if graph.get_distance(node, neighbor) != np.inf:
-                if graph.index_tracker[neighbor] is None:
-                    cls.tarjan_dfs(graph, neighbor)
-                    graph.low_link[node] = min(graph.low_link[node], graph.low_link[neighbor])
-                elif graph.on_stack[neighbor]:
-                    graph.low_link[node] = min(graph.low_link[node], graph.index_tracker[neighbor])
-
-        if graph.low_link[node] == graph.index_tracker[node]:
-            scc = []
-            while True:
-                top = graph.stack.pop()
-                graph.on_stack[top] = False
-                scc.append(top)
-                if top == node:
-                    break
-            graph.scc_list.append(scc)
-
     # Перейменована хрінь по-суті
     @classmethod
     def find_scc_path_based(cls, graph):
@@ -306,32 +324,34 @@ class GraphOperations:
                     break
             graph.scc_list.append(scc)
         return graph.scc_list
-
-
     @staticmethod
-    def draw_kiyv_map(kiyv_map:Graph, label="kiyv_map", paths:List[List[Tuple[int, int]]]=[], scc=[]):
-        G = nx.Graph()
+    def draw_kiyv_map(kiyv_map: Graph, label="kiyv_map", paths: List[List[Tuple[int, int]]] = [], scc=[]):
+        G = nx.DiGraph()  # Use directed graph since there are one-way connections
         G.add_nodes_from(range(kiyv_map.num_nodes))
 
         for u in range(kiyv_map.num_nodes):
-            for v in range(u + 1, kiyv_map.num_nodes):
+            for v in range(kiyv_map.num_nodes):
+                if u == v:
+                    continue
                 if kiyv_map.distances[u][v] != np.inf:
-                    G.add_edge(u, v, weight=kiyv_map.distances[u][v])
-                    
+                    G.add_edge(u, v, weight=kiyv_map.distances[u][v]*6)
+                if kiyv_map.distances[v][u] != np.inf:  # Also check reverse direction
+                    G.add_edge(v, u, weight=kiyv_map.distances[v][u]*6)
+
         pos = nx.spring_layout(G)
-        colors = ["tab:red", "tab:blue", "tab:green", "yellow", "orange", "indigo"] * 10 
-        
+        colors = ["tab:red", "tab:blue", "tab:green", "yellow", "orange", "indigo"] * 10
+
         for node in range(kiyv_map.num_nodes):
             pos[node] = np.array(kiyv_map.get_pos(node))
 
         nx.draw_networkx_nodes(G, pos, node_size=400)
         for lst, color in zip(scc, colors):
             nx.draw_networkx_nodes(G, pos, lst, node_size=400, node_color=color)
-        
-        nx.draw_networkx_edges(G,  pos,  width=0.8, alpha=0.8, arrows=True)
+
+        nx.draw_networkx_edges(G, pos, width=0.8, alpha=0.8, arrows=True, arrowstyle='->', arrowsize=20)
         for path, color in zip(paths, colors):
-            nx.draw_networkx_edges(G, pos, edgelist=path,width=5, edge_color=color)
-            
+            nx.draw_networkx_edges(G, pos, edgelist=path, width=5, edge_color=color, arrows=True, arrowstyle='->', arrowsize=20)
+
         labels = {node: kiyv_map.get_label(node) for node in G.nodes()}
         nx.draw_networkx_labels(G, pos, labels, font_size=9, font_color='black')
 
@@ -342,6 +362,7 @@ class GraphOperations:
         plt.axis("off")
         plt.savefig(Config.output_dir + f'{label}.png')
         plt.show()
+
 
     @staticmethod
     def draw_graph(graph, label="graph"):
